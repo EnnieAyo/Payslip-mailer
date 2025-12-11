@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "ts-node prisma/seed.ts"
+    "db:seed": "npx prisma db seed"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
@@ -67,6 +67,7 @@
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.3.3"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
