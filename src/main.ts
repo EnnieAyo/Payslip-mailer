@@ -20,6 +20,7 @@ async function bootstrap() {
     .setTitle('Payslip Mailer API')
     .setDescription('API for uploading and distributing payslips')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

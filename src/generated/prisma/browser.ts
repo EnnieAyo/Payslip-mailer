@@ -32,3 +32,8 @@ export type Payslip = Prisma.PayslipModel
  * 
  */
 export type PayslipUpload = Prisma.PayslipUploadModel
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel

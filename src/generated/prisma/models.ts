@@ -11,4 +11,5 @@
 export type * from './models/Employee'
 export type * from './models/Payslip'
 export type * from './models/PayslipUpload'
+export type * from './models/User'
 export type * from './commonInputTypes'

@@ -63,3 +63,21 @@ model PayslipUpload {
   @@index([uuid])
   @@map("payslip_uploads")
 }
+
+model User {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  email     String  @unique
+  password  String
+  firstName String?
+  lastName  String?
+  role      String  @default("user") // user, admin, payroll_manager
+  permissions String[] @default([]) // comma-separated: payslips:read, payslips:write, employees:read, employees:write, etc.
+  isActive  Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([uuid])
+  @@index([email])
+  @@map("users")
+}
