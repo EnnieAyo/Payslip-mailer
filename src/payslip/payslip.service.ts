@@ -27,17 +27,35 @@ export class PayslipService {
     });
 
     try {
-      // Split the bulk PDF (or process single PDF)
-      const payslips = await this.pdfService.splitBulkPdf(
-        pdfBuffer,
-        uploadId,
-      );
+      // Determine if the uploaded file is a ZIP archive. If so,
+      // extract contained PDFs (recursively) and then split each
+      // extracted PDF. Otherwise, split the single uploaded PDF.
+      let payslipsInputs: { ippisNumber: string | null; pdfBuffer: Buffer; sourceFileName?: string }[] = [];
+
+      if (fileName.toLowerCase().endsWith('.zip')) {
+        const extracted = await this.pdfService.extractPdfsFromZip(pdfBuffer);
+        for (const f of extracted) {
+          const parts = await this.pdfService.splitBulkPdf(f.pdfBuffer, uploadId);
+          for (const p of parts) {
+            payslipsInputs.push({ ...p, sourceFileName: f.fileName });
+          }
+        }
+      } else {
+        const parts = await this.pdfService.splitBulkPdf(pdfBuffer, uploadId);
+        payslipsInputs = parts;
+      }
+
+      // Update upload with the actual total files found
+      await this.prisma.payslipUpload.update({
+        where: { id: upload.id },
+        data: { totalFiles: payslipsInputs.length },
+      });
 
       let successCount = 0;
       let failureCount = 0;
 
       // Process each payslip
-      for (const payslip of payslips) {
+      for (const payslip of payslipsInputs) {
         const employee = await this.employeeService.findByIppisNumber(
           payslip.ippisNumber || 'IPPIS4536',
         );

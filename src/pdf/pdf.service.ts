@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import * as pdfParse from 'pdf-parse';
 import * as fs from 'fs';
 import * as path from 'path';
+import JSZip from 'jszip';
 
 @Injectable()
 export class PdfService {
@@ -46,6 +47,51 @@ export class PdfService {
     } catch (error) {
       console.error('Error splitting PDF:', error);
       throw new BadRequestException('Failed to split PDF file');
+    }
+  }
+
+  /**
+   * Extract all PDF files from a zip archive buffer. This function will
+   * recursively extract nested zip files and return an array of {fileName, buffer}.
+   */
+  async extractPdfsFromZip(
+    zipBuffer: Buffer,
+  ): Promise<{ fileName: string; pdfBuffer: Buffer }[]> {
+    try {
+      const zip = await JSZip.loadAsync(zipBuffer);
+      const files: { fileName: string; pdfBuffer: Buffer }[] = [];
+
+      const entries = Object.values(zip.files) as any[];
+
+      for (const entry of entries) {
+        if (entry.dir) continue;
+
+        const name = entry.name;
+        const lower = name.toLowerCase();
+
+        if (lower.endsWith('.pdf')) {
+          const buf = await entry.async('nodebuffer');
+          files.push({ fileName: path.basename(name), pdfBuffer: buf });
+          continue;
+        }
+
+        if (lower.endsWith('.zip')) {
+          const nestedBuf = await entry.async('nodebuffer');
+          const nestedFiles = await this.extractPdfsFromZip(nestedBuf);
+          // Keep original folder name as prefix to avoid collisions
+          for (const nf of nestedFiles) {
+            files.push({ fileName: `${path.basename(name)}::${nf.fileName}`, pdfBuffer: nf.pdfBuffer });
+          }
+          continue;
+        }
+
+        // ignore other file types
+      }
+
+      return files;
+    } catch (error) {
+      console.error('Error extracting zip:', error);
+      throw new BadRequestException('Failed to extract ZIP archive');
     }
   }
 
