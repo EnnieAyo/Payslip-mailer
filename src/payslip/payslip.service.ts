@@ -1,0 +1,168 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { EmailService } from '../email/email.service';
+import { PdfService } from '../pdf/pdf.service';
+import { EmployeeService } from '../employee/employee.service';
+
+@Injectable()
+export class PayslipService {
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService,
+    private pdfService: PdfService,
+    private employeeService: EmployeeService,
+  ) {}
+
+  async uploadAndDistribute(pdfBuffer: Buffer, fileName: string) {
+    const uploadId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Create upload record
+    const upload = await this.prisma.payslipUpload.create({
+      data: {
+        fileName,
+        filePath: `uploads/${uploadId}`,
+        totalFiles: 1,
+        status: 'processing',
+      },
+    });
+
+    try {
+      // Split the bulk PDF (or process single PDF)
+      const payslips = await this.pdfService.splitBulkPdf(
+        pdfBuffer,
+        uploadId,
+      );
+
+      let successCount = 0;
+      let failureCount = 0;
+
+      // Process each payslip
+      for (const payslip of payslips) {
+        const employee = await this.employeeService.findByIppisNumber(
+          payslip.ippisNumber,
+        );
+
+        if (!employee) {
+          console.warn(
+            `Employee with IPPIS number ${payslip.ippisNumber} not found`,
+          );
+          failureCount++;
+          continue;
+        }
+
+        // Save payslip to database
+        const savedPayslip = await this.prisma.payslip.create({
+          data: {
+            ippisNumber: payslip.ippisNumber,
+            fileName: `${payslip.ippisNumber}-${fileName}`,
+            filePath: await this.pdfService.savePdfFile(
+              payslip.pdfBuffer,
+              `${payslip.ippisNumber}.pdf`,
+              uploadId,
+            ),
+            pdfContent: payslip.pdfBuffer,
+            employeeId: employee.id,
+          },
+        });
+
+        // Send email
+        const emailSent = await this.emailService.sendPayslip(
+          employee.email,
+          payslip.pdfBuffer,
+          `${employee.firstName}_${employee.lastName}_Payslip.pdf`,
+          `${employee.firstName} ${employee.lastName}`,
+        );
+
+        if (emailSent) {
+          await this.prisma.payslip.update({
+            where: { id: savedPayslip.id },
+            data: {
+              emailSent: true,
+              emailSentAt: new Date(),
+            },
+          });
+          successCount++;
+        } else {
+          failureCount++;
+        }
+      }
+
+      // Update upload status
+      await this.prisma.payslipUpload.update({
+        where: { id: upload.id },
+        data: {
+          status: 'completed',
+          successCount,
+          failureCount,
+          totalFiles: successCount + failureCount,
+        },
+      });
+
+      return {
+        uploadId,
+        successCount,
+        failureCount,
+        totalFiles: successCount + failureCount,
+      };
+    } catch (error) {
+      // Update upload status to failed
+      await this.prisma.payslipUpload.update({
+        where: { id: upload.id },
+        data: {
+          status: 'failed',
+        },
+      });
+
+      throw error;
+    }
+  }
+
+  async getUploadStatus(uploadId: string) {
+    return this.prisma.payslipUpload.findUnique({
+      where: { id: parseInt(uploadId) },
+    });
+  }
+
+  async getPayslipsByEmployee(employeeId: number) {
+    return this.prisma.payslip.findMany({
+      where: { employeeId },
+    });
+  }
+
+  async getUnsentPayslips() {
+    return this.prisma.payslip.findMany({
+      where: { emailSent: false },
+      include: { employee: true },
+    });
+  }
+
+  async resendPayslip(payslipId: number) {
+    const payslip = await this.prisma.payslip.findUnique({
+      where: { id: payslipId },
+      include: { employee: true },
+    });
+
+    if (!payslip) {
+      throw new Error('Payslip not found');
+    }
+
+    const emailSent = await this.emailService.sendPayslip(
+      payslip.employee.email,
+      payslip.pdfContent,
+      payslip.fileName,
+      `${payslip.employee.firstName} ${payslip.employee.lastName}`,
+    );
+
+    if (emailSent) {
+      return this.prisma.payslip.update({
+        where: { id: payslipId },
+        data: {
+          emailSent: true,
+          emailSentAt: new Date(),
+        },
+      });
+    }
+
+    return payslip;
+  }
+}

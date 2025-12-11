@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id        Int     @id @default(autoincrement())
+  ippisNumber String @unique
+  firstName String
+  lastName  String
+  email     String  @unique
+  department String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payslips Payslip[]
+
+  @@map("employees")
+}
+
+model Payslip {
+  id        Int     @id @default(autoincrement())
+  ippisNumber String
+  fileName  String
+  filePath  String
+  pdfContent Bytes
+  employeeId Int
+  employee  Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  emailSent Boolean @default(false)
+  emailSentAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ippisNumber])
+  @@index([employeeId])
+  @@map("payslips")
+}
+
+model PayslipUpload {
+  id        Int     @id @default(autoincrement())
+  fileName  String
+  filePath  String
+  totalFiles Int
+  successCount Int @default(0)
+  failureCount Int @default(0)
+  status    String @default("pending") // pending, processing, completed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("payslip_uploads")
+}
