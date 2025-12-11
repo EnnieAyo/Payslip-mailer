@@ -39,7 +39,7 @@ export class PayslipService {
       // Process each payslip
       for (const payslip of payslips) {
         const employee = await this.employeeService.findByIppisNumber(
-          payslip.ippisNumber,
+          payslip.ippisNumber || 'IPPIS4536',
         );
 
         if (!employee) {
@@ -53,14 +53,15 @@ export class PayslipService {
         // Save payslip to database
         const savedPayslip = await this.prisma.payslip.create({
           data: {
-            ippisNumber: payslip.ippisNumber,
+            ippisNumber: payslip.ippisNumber||'',
             fileName: `${payslip.ippisNumber}-${fileName}`,
             filePath: await this.pdfService.savePdfFile(
               payslip.pdfBuffer,
               `${payslip.ippisNumber}.pdf`,
               uploadId,
             ),
-            pdfContent: payslip.pdfBuffer,
+            // Prisma `Bytes` maps to `Uint8Array` — convert Node Buffer to Uint8Array
+            pdfContent: new Uint8Array(payslip.pdfBuffer),
             employeeId: employee.id,
           },
         });
@@ -148,7 +149,8 @@ export class PayslipService {
 
     const emailSent = await this.emailService.sendPayslip(
       payslip.employee.email,
-      payslip.pdfContent,
+      // Convert Prisma `Bytes` (Uint8Array) back to Node Buffer for Nodemailer
+      Buffer.from(payslip.pdfContent as Uint8Array),
       payslip.fileName,
       `${payslip.employee.firstName} ${payslip.employee.lastName}`,
     );

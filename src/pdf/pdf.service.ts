@@ -27,7 +27,7 @@ export class PdfService {
   async splitBulkPdf(
     pdfBuffer: Buffer,
     uploadId: string,
-  ): Promise<{ ippisNumber: string; pdfBuffer: Buffer }[]> {
+  ): Promise<{ ippisNumber: string|null; pdfBuffer: Buffer }[]> {
     try {
       const data = await pdfParse(pdfBuffer);
 

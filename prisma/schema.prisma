@@ -2,17 +2,18 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js",
-  output = '../generated/prisma'
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat    = "cjs"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
 }
 
 model Employee {
   id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
   ippisNumber String @unique
   firstName String
   lastName  String
@@ -23,11 +24,13 @@ model Employee {
 
   payslips Payslip[]
 
+  @@index([uuid])
   @@map("employees")
 }
 
 model Payslip {
   id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
   ippisNumber String
   fileName  String
   filePath  String
@@ -41,11 +44,13 @@ model Payslip {
 
   @@index([ippisNumber])
   @@index([employeeId])
+  @@index([uuid])
   @@map("payslips")
 }
 
 model PayslipUpload {
   id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
   fileName  String
   filePath  String
   totalFiles Int
@@ -55,5 +60,6 @@ model PayslipUpload {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([uuid])
   @@map("payslip_uploads")
 }
