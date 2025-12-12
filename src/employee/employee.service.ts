@@ -35,12 +35,27 @@ export class EmployeeService {
     return employee;
   }
 
-  async findAll() {
-    return this.prisma.employee.findMany({
-      include: {
-        payslips: true,
-      },
-    });
+  async findAll(page = 0, limit = 10) {
+    const take = limit;
+    const skip = page * limit;
+
+    const [total, data] = await Promise.all([
+      this.prisma.employee.count(),
+      this.prisma.employee.findMany({
+        include: { payslips: true },
+        take,
+        skip,
+        orderBy: { id: 'asc' },
+      }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit: take,
+      totalPages: Math.ceil(total / take) || 0,
+    };
   }
 
   async findOne(id: number) {

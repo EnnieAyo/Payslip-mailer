@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { PayslipModule } from './payslip/payslip.module';
 import { EmployeeModule } from './employee/employee.module';
@@ -11,6 +11,8 @@ import { AppService } from './app.service';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ConfigModule } from '@nestjs/config';
 import { AuditLoggingInterceptor } from './common/interceptors/audit-logging.interceptor';
+import { ResponseWrapperInterceptor } from './common/interceptors/response-wrapper.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -47,6 +49,14 @@ import { AuditLoggingInterceptor } from './common/interceptors/audit-logging.int
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditLoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseWrapperInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
   ],
 })

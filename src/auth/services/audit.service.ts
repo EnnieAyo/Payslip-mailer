@@ -37,32 +37,46 @@ export class AuditService {
     userId?: number;
     action?: string;
     resource?: string;
+    page?: number;
     limit?: number;
-    offset?: number;
   }) {
-    const limit = filters?.limit || 50;
-    const offset = filters?.offset || 0;
+    const page = filters?.page ?? 0;
+    const limit = filters?.limit ?? 50;
+    const skip = page * limit;
 
-    return this.prisma.auditLog.findMany({
-      where: {
-        userId: filters?.userId,
-        action: filters?.action,
-        resource: filters?.resource,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip: offset,
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
+    const where: any = {
+      userId: filters?.userId,
+      action: filters?.action,
+      resource: filters?.resource,
+    };
+
+    const [total, data] = await Promise.all([
+      this.prisma.auditLog.count({ where }),
+      this.prisma.auditLog.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+            },
           },
         },
-      },
-    });
+      }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 0,
+    };
   }
 
   async getAuditTrail(resourceId: number, resource: string) {

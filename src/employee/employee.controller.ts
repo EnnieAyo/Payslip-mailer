@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { EmployeeDto } from './dto/employee.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RbacGuard } from '../auth/guards/rbac.guard';
 import { Permissions } from '../auth/decorators/permissions.decorator';
@@ -34,11 +35,15 @@ export class EmployeeController {
   @Permissions('employees:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all employees' })
-  @ApiResponse({ status: 200, type: EmployeeDto, isArray: true })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiResponse({ status: 200, description: 'Employees retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
-  findAll() {
-    return this.employeeService.findAll();
+  findAll(@Query() pagination: PaginationDto) {
+    const { page = 0, limit = 10 } = pagination || {};
+    return this.employeeService.findAll(page, limit);
   }
 
   @Get(':id')

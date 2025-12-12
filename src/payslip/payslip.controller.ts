@@ -8,11 +8,15 @@ import {
   UploadedFile,
   BadRequestException,
   UseGuards,
+  Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PayslipService } from './payslip.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PayslipDto, PayslipUploadDto, UploadResultDto } from './dto/payslip.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RbacGuard } from '../auth/guards/rbac.guard';
 import { Permissions } from '../auth/decorators/permissions.decorator';
@@ -79,11 +83,18 @@ export class PayslipController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get payslips by employee ID' })
   @ApiParam({ name: 'employeeId', description: 'Employee numeric ID' })
-  @ApiResponse({ status: 200, description: 'Payslips for employee', type: PayslipDto, isArray: true })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiResponse({ status: 200, description: 'Payslips for employee' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
-  async getPayslipsByEmployee(@Param('employeeId') employeeId: string) {
-    return this.payslipService.getPayslipsByEmployee(+employeeId);
+  async getPayslipsByEmployee(
+    @Param('employeeId') employeeId: string,
+    @Query() pagination: PaginationDto,
+  ) {
+    const { page = 0, limit = 10 } = pagination || {};
+    return this.payslipService.getPayslipsByEmployee(+employeeId, page, limit);
   }
 
   @Get('unsent')
@@ -91,11 +102,15 @@ export class PayslipController {
   @Permissions('payslips:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get unsent payslips' })
-  @ApiResponse({ status: 200, description: 'Unsent payslips', type: PayslipDto, isArray: true })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiResponse({ status: 200, description: 'Unsent payslips' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
-  async getUnsentPayslips() {
-    return this.payslipService.getUnsentPayslips();
+  async getUnsentPayslips(@Query() pagination: PaginationDto) {
+    const { page = 0, limit = 10 } = pagination || {};
+    return this.payslipService.getUnsentPayslips(page, limit);
   }
 
   @Post('resend/:payslipId')

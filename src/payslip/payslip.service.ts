@@ -144,17 +144,51 @@ export class PayslipService {
     });
   }
 
-  async getPayslipsByEmployee(employeeId: number) {
-    return this.prisma.payslip.findMany({
-      where: { employeeId },
-    });
+  async getPayslipsByEmployee(employeeId: number, page = 0, limit = 10) {
+    const take = limit;
+    const skip = page * limit;
+
+    const [total, data] = await Promise.all([
+      this.prisma.payslip.count({ where: { employeeId } }),
+      this.prisma.payslip.findMany({
+        where: { employeeId },
+        take,
+        skip,
+        orderBy: { id: 'desc' },
+      }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit: take,
+      totalPages: Math.ceil(total / take) || 0,
+    };
   }
 
-  async getUnsentPayslips() {
-    return this.prisma.payslip.findMany({
-      where: { emailSent: false },
-      include: { employee: true },
-    });
+  async getUnsentPayslips(page = 0, limit = 10) {
+    const take = limit;
+    const skip = page * limit;
+
+    const [total, data] = await Promise.all([
+      this.prisma.payslip.count({ where: { emailSent: false } }),
+      this.prisma.payslip.findMany({
+        where: { emailSent: false },
+        include: { employee: true },
+        take,
+        skip,
+        orderBy: { id: 'desc' },
+      }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit: take,
+      totalPages: Math.ceil(total / take) || 0,
+    };
   }
 
   async resendPayslip(payslipId: number, userId?: number) {
