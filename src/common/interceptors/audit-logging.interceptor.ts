@@ -85,10 +85,11 @@ const AUDITABLE_ENDPOINTS: AuditableEndpoint[] = [
     action: 'EMPLOYEE_CREATED',
     resource: 'employee',
     extractDetails: (body) => ({
-      ippis: body.ippis,
-      name: body.name,
-      email: body.email,
-      department: body.department,
+      ippisNumber: body?.ippisNumber,
+      firstName: body?.firstName,
+      lastName: body?.lastName,
+      email: body?.email,
+      department: body?.department,
     }),
   },
   {

@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { permission } from 'process';
 
 @Injectable()
 export class AuthService {
@@ -117,7 +118,7 @@ export class AuthService {
     });
 
     // Generate JWT token
-    const access_token = this.jwtService.sign({
+    const access_token = await this.jwtService.signAsync({
       sub: user.id,
       email: user.email,
       role: user.role,
@@ -132,6 +133,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        permissions: user.permissions,
       },
     };
   }

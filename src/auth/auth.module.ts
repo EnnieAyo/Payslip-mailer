@@ -14,10 +14,11 @@ import { ConfigModule } from '@nestjs/config';
     PrismaModule,
     EmailModule,
     PassportModule,
-    ConfigModule,
+    ConfigModule.forRoot(),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
       signOptions: { expiresIn: '24h' },
+      global: true,
     }),
   ],
   providers: [AuthService, JwtStrategy, AuditService],
