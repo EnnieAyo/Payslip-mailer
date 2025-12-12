@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuditLoggingInterceptor } from './common/interceptors/audit-logging.interceptor';
 import { ResponseWrapperInterceptor } from './common/interceptors/response-wrapper.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 @Module({
   imports: [
@@ -46,6 +47,10 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: AuditLoggingInterceptor,
