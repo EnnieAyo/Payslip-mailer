@@ -9,6 +9,9 @@ The Payslip Mailer API implements JWT-based authentication with Role-Based Acces
 - **Role-Based Access**: Three default roles: `user`, `payroll_manager`, `admin`
 - **Permission-Based Authorization**: Fine-grained permissions (e.g., `payslips:read`, `payslips:write`)
 - **Password Hashing**: Bcrypt for secure password storage
+- **Account Lockout**: Automatic account lockout after 5 failed login attempts
+- **Last Login Tracking**: Records the timestamp of each successful login
+- **Audit Columns**: All database tables track who created/updated records (`createdBy`, `updatedBy`)
 - **Swagger Integration**: Built-in Bearer token support in Swagger UI
 
 ## Default Users
@@ -121,6 +124,172 @@ Permissions follow the pattern: `resource:action`
 #### User Permissions
 - `users:read` - View user data
 - `users:write` - Manage users
+
+## Account Security
+
+### Account Lockout (5 Failed Login Attempts)
+
+After **5 consecutive failed login attempts**, a user account is automatically locked to prevent brute-force attacks.
+
+**What happens:**
+1. First failed attempt: `failedLoginAttempts` increments
+2. After 5 failed attempts: `isLocked` = true, error returned
+3. On successful login: `failedLoginAttempts` resets to 0, `lastLoginAt` updated
+
+**Error on Locked Account:**
+```
+"Account is locked due to too many failed login attempts. Please contact an administrator."
+```
+
+### Last Login Tracking
+
+Every successful login updates `lastLoginAt` with the current timestamp. Use this to:
+- Monitor user activity
+- Detect inactive accounts
+- Identify suspicious access patterns
+
+Query example:
+```bash
+# Get users with login history
+curl -X GET "http://localhost:3000/api" \
+  -H "Authorization: Bearer ADMIN_TOKEN"
+```
+
+### Unlocking User Accounts (Admin Only)
+
+#### POST `/auth/unlock`
+
+Reset a locked user account. Requires `users:write` permission.
+
+```bash
+curl -X POST "http://localhost:3000/auth/unlock" \
+  -H "Authorization: Bearer ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"userId": 3}'
+```
+
+**Request:**
+```json
+{
+  "userId": 3
+}
+```
+
+**Response:**
+```json
+{
+  "message": "User account unlocked successfully",
+  "user": {
+    "id": 3,
+    "email": "user@example.com",
+    "isLocked": false
+  }
+}
+```
+
+### Resetting User Passwords (Admin Only)
+
+#### POST `/auth/reset-password`
+
+Admin can reset a user's password. Also unlocks the account and resets failed login counter.
+
+```bash
+curl -X POST "http://localhost:3000/auth/reset-password" \
+  -H "Authorization: Bearer ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"userId": 3, "newPassword": "newSecurePassword123"}'
+```
+
+**Request:**
+```json
+{
+  "userId": 3,
+  "newPassword": "newSecurePassword123"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Password reset successfully",
+  "user": {
+    "id": 3,
+    "email": "user@example.com",
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+}
+```
+
+## Audit Columns
+
+All tables include audit tracking fields:
+
+- `createdBy` (Int, nullable): User ID who created the record
+- `updatedBy` (Int, nullable): User ID who last updated the record
+- `createdAt` (DateTime): When created
+- `updatedAt` (DateTime): When last modified
+
+**Tables with audit columns:**
+- `users`
+- `employees`
+- `payslips`
+- `payslip_uploads`
+
+### Recording Audit Data in Code
+
+When creating/updating records, populate the audit fields:
+
+```typescript
+// Creating with audit trail
+await this.prisma.employee.create({
+  data: {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john@example.com',
+    ippisNumber: 'IPPIS001',
+    createdBy: currentUserId, // Track creator
+  },
+});
+
+// Updating with audit trail
+await this.prisma.employee.update({
+  where: { id: employeeId },
+  data: {
+    firstName: 'Jane',
+    updatedBy: currentUserId, // Track who modified
+  },
+});
+```
+
+### Querying Audit Data
+
+```sql
+-- Find all records created by a specific user
+SELECT * FROM employees WHERE createdBy = 1;
+
+-- Find recent changes
+SELECT 
+  id, firstName, lastName, 
+  updatedAt,
+  updatedBy
+FROM employees
+WHERE updatedAt > NOW() - INTERVAL '7 days'
+ORDER BY updatedAt DESC;
+
+-- Audit trail with user details
+SELECT 
+  e.id, 
+  e.firstName, 
+  u1.email as createdBy,
+  e.createdAt,
+  u2.email as lastModifiedBy,
+  e.updatedAt
+FROM employees e
+LEFT JOIN users u1 ON e.createdBy = u1.id
+LEFT JOIN users u2 ON e.updatedBy = u2.id
+ORDER BY e.updatedAt DESC;
+```
 
 ## Using Swagger UI
 

@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { PdfService } from '../pdf/pdf.service';
 import { EmployeeService } from '../employee/employee.service';
+import { AuditService } from '../auth/services/audit.service';
 
 @Injectable()
 export class PayslipService {
@@ -11,6 +12,7 @@ export class PayslipService {
     private emailService: EmailService,
     private pdfService: PdfService,
     private employeeService: EmployeeService,
+    private auditService: AuditService,
   ) {}
 
   async uploadAndDistribute(pdfBuffer: Buffer, fileName: string) {
@@ -155,7 +157,7 @@ export class PayslipService {
     });
   }
 
-  async resendPayslip(payslipId: number) {
+  async resendPayslip(payslipId: number, userId?: number) {
     const payslip = await this.prisma.payslip.findUnique({
       where: { id: payslipId },
       include: { employee: true },
@@ -165,24 +167,81 @@ export class PayslipService {
       throw new Error('Payslip not found');
     }
 
-    const emailSent = await this.emailService.sendPayslip(
-      payslip.employee.email,
-      // Convert Prisma `Bytes` (Uint8Array) back to Node Buffer for Nodemailer
-      Buffer.from(payslip.pdfContent as Uint8Array),
-      payslip.fileName,
-      `${payslip.employee.firstName} ${payslip.employee.lastName}`,
-    );
+    try {
+      const emailSent = await this.emailService.sendPayslip(
+        payslip.employee.email,
+        // Convert Prisma `Bytes` (Uint8Array) back to Node Buffer for Nodemailer
+        Buffer.from(payslip.pdfContent as Uint8Array),
+        payslip.fileName,
+        `${payslip.employee.firstName} ${payslip.employee.lastName}`,
+      );
 
-    if (emailSent) {
-      return this.prisma.payslip.update({
-        where: { id: payslipId },
-        data: {
-          emailSent: true,
-          emailSentAt: new Date(),
-        },
-      });
+      if (emailSent) {
+        const updated = await this.prisma.payslip.update({
+          where: { id: payslipId },
+          data: {
+            emailSent: true,
+            emailSentAt: new Date(),
+          },
+        });
+
+        // Log successful resend
+        if (userId) {
+          await this.auditService.log({
+            userId,
+            action: 'PAYSLIP_RESENT',
+            resource: 'payslip',
+            resourceId: payslipId,
+            details: {
+              employeeId: payslip.employeeId,
+              employeeEmail: payslip.employee.email,
+              fileName: payslip.fileName,
+            },
+            status: 'success',
+          });
+        }
+
+        return updated;
+      }
+
+      // Log failed resend
+      if (userId) {
+        await this.auditService.log({
+          userId,
+          action: 'PAYSLIP_RESENT',
+          resource: 'payslip',
+          resourceId: payslipId,
+          details: {
+            employeeId: payslip.employeeId,
+            employeeEmail: payslip.employee.email,
+            fileName: payslip.fileName,
+          },
+          status: 'failure',
+          errorMessage: 'Failed to send email',
+        });
+      }
+
+      return payslip;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      // Log error
+      if (userId) {
+        await this.auditService.log({
+          userId,
+          action: 'PAYSLIP_RESENT',
+          resource: 'payslip',
+          resourceId: payslipId,
+          details: {
+            employeeId: payslip.employeeId,
+            fileName: payslip.fileName,
+          },
+          status: 'failure',
+          errorMessage,
+        });
+      }
+
+      throw error;
     }
-
-    return payslip;
   }
 }

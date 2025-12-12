@@ -15,6 +15,7 @@ async function bootstrap() {
       xPoweredBy: false,
     }),
   );
+
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('Payslip Mailer API')

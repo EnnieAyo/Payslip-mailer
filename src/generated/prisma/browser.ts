@@ -37,3 +37,13 @@ export type PayslipUpload = Prisma.PayslipUploadModel
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model PasswordReset
+ * 
+ */
+export type PasswordReset = Prisma.PasswordResetModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel

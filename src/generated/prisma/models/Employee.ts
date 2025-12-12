@@ -28,10 +28,14 @@ export type AggregateEmployee = {
 
 export type EmployeeAvgAggregateOutputType = {
   id: number | null
+  createdBy: number | null
+  updatedBy: number | null
 }
 
 export type EmployeeSumAggregateOutputType = {
   id: number | null
+  createdBy: number | null
+  updatedBy: number | null
 }
 
 export type EmployeeMinAggregateOutputType = {
@@ -43,7 +47,9 @@ export type EmployeeMinAggregateOutputType = {
   email: string | null
   department: string | null
   createdAt: Date | null
+  createdBy: number | null
   updatedAt: Date | null
+  updatedBy: number | null
 }
 
 export type EmployeeMaxAggregateOutputType = {
@@ -55,7 +61,9 @@ export type EmployeeMaxAggregateOutputType = {
   email: string | null
   department: string | null
   createdAt: Date | null
+  createdBy: number | null
   updatedAt: Date | null
+  updatedBy: number | null
 }
 
 export type EmployeeCountAggregateOutputType = {
@@ -67,17 +75,23 @@ export type EmployeeCountAggregateOutputType = {
   email: number
   department: number
   createdAt: number
+  createdBy: number
   updatedAt: number
+  updatedBy: number
   _all: number
 }
 
 
 export type EmployeeAvgAggregateInputType = {
   id?: true
+  createdBy?: true
+  updatedBy?: true
 }
 
 export type EmployeeSumAggregateInputType = {
   id?: true
+  createdBy?: true
+  updatedBy?: true
 }
 
 export type EmployeeMinAggregateInputType = {
@@ -89,7 +103,9 @@ export type EmployeeMinAggregateInputType = {
   email?: true
   department?: true
   createdAt?: true
+  createdBy?: true
   updatedAt?: true
+  updatedBy?: true
 }
 
 export type EmployeeMaxAggregateInputType = {
@@ -101,7 +117,9 @@ export type EmployeeMaxAggregateInputType = {
   email?: true
   department?: true
   createdAt?: true
+  createdBy?: true
   updatedAt?: true
+  updatedBy?: true
 }
 
 export type EmployeeCountAggregateInputType = {
@@ -113,7 +131,9 @@ export type EmployeeCountAggregateInputType = {
   email?: true
   department?: true
   createdAt?: true
+  createdBy?: true
   updatedAt?: true
+  updatedBy?: true
   _all?: true
 }
 
@@ -212,7 +232,9 @@ export type EmployeeGroupByOutputType = {
   email: string
   department: string | null
   createdAt: Date
+  createdBy: number | null
   updatedAt: Date
+  updatedBy: number | null
   _count: EmployeeCountAggregateOutputType | null
   _avg: EmployeeAvgAggregateOutputType | null
   _sum: EmployeeSumAggregateOutputType | null
@@ -247,7 +269,9 @@ export type EmployeeWhereInput = {
   email?: Prisma.StringFilter<"Employee"> | string
   department?: Prisma.StringNullableFilter<"Employee"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Employee"> | Date | string
+  createdBy?: Prisma.IntNullableFilter<"Employee"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Employee"> | Date | string
+  updatedBy?: Prisma.IntNullableFilter<"Employee"> | number | null
   payslips?: Prisma.PayslipListRelationFilter
 }
 
@@ -260,7 +284,9 @@ export type EmployeeOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   department?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   payslips?: Prisma.PayslipOrderByRelationAggregateInput
 }
 
@@ -276,7 +302,9 @@ export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
   lastName?: Prisma.StringFilter<"Employee"> | string
   department?: Prisma.StringNullableFilter<"Employee"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Employee"> | Date | string
+  createdBy?: Prisma.IntNullableFilter<"Employee"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Employee"> | Date | string
+  updatedBy?: Prisma.IntNullableFilter<"Employee"> | number | null
   payslips?: Prisma.PayslipListRelationFilter
 }, "id" | "uuid" | "ippisNumber" | "email">
 
@@ -289,7 +317,9 @@ export type EmployeeOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   department?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.EmployeeCountOrderByAggregateInput
   _avg?: Prisma.EmployeeAvgOrderByAggregateInput
   _max?: Prisma.EmployeeMaxOrderByAggregateInput
@@ -309,7 +339,9 @@ export type EmployeeScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"Employee"> | string
   department?: Prisma.StringNullableWithAggregatesFilter<"Employee"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Employee"> | Date | string
+  createdBy?: Prisma.IntNullableWithAggregatesFilter<"Employee"> | number | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Employee"> | Date | string
+  updatedBy?: Prisma.IntNullableWithAggregatesFilter<"Employee"> | number | null
 }
 
 export type EmployeeCreateInput = {
@@ -320,7 +352,9 @@ export type EmployeeCreateInput = {
   email: string
   department?: string | null
   createdAt?: Date | string
+  createdBy?: number | null
   updatedAt?: Date | string
+  updatedBy?: number | null
   payslips?: Prisma.PayslipCreateNestedManyWithoutEmployeeInput
 }
 
@@ -333,7 +367,9 @@ export type EmployeeUncheckedCreateInput = {
   email: string
   department?: string | null
   createdAt?: Date | string
+  createdBy?: number | null
   updatedAt?: Date | string
+  updatedBy?: number | null
   payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutEmployeeInput
 }
 
@@ -345,7 +381,9 @@ export type EmployeeUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   payslips?: Prisma.PayslipUpdateManyWithoutEmployeeNestedInput
 }
 
@@ -358,7 +396,9 @@ export type EmployeeUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   payslips?: Prisma.PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
 }
 
@@ -371,7 +411,9 @@ export type EmployeeCreateManyInput = {
   email: string
   department?: string | null
   createdAt?: Date | string
+  createdBy?: number | null
   updatedAt?: Date | string
+  updatedBy?: number | null
 }
 
 export type EmployeeUpdateManyMutationInput = {
@@ -382,7 +424,9 @@ export type EmployeeUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type EmployeeUncheckedUpdateManyInput = {
@@ -394,7 +438,9 @@ export type EmployeeUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type EmployeeCountOrderByAggregateInput = {
@@ -406,11 +452,15 @@ export type EmployeeCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   department?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  updatedBy?: Prisma.SortOrder
 }
 
 export type EmployeeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdBy?: Prisma.SortOrder
+  updatedBy?: Prisma.SortOrder
 }
 
 export type EmployeeMaxOrderByAggregateInput = {
@@ -422,7 +472,9 @@ export type EmployeeMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   department?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  updatedBy?: Prisma.SortOrder
 }
 
 export type EmployeeMinOrderByAggregateInput = {
@@ -434,11 +486,15 @@ export type EmployeeMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   department?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  updatedBy?: Prisma.SortOrder
 }
 
 export type EmployeeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  createdBy?: Prisma.SortOrder
+  updatedBy?: Prisma.SortOrder
 }
 
 export type EmployeeScalarRelationFilter = {
@@ -456,6 +512,14 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -488,7 +552,9 @@ export type EmployeeCreateWithoutPayslipsInput = {
   email: string
   department?: string | null
   createdAt?: Date | string
+  createdBy?: number | null
   updatedAt?: Date | string
+  updatedBy?: number | null
 }
 
 export type EmployeeUncheckedCreateWithoutPayslipsInput = {
@@ -500,7 +566,9 @@ export type EmployeeUncheckedCreateWithoutPayslipsInput = {
   email: string
   department?: string | null
   createdAt?: Date | string
+  createdBy?: number | null
   updatedAt?: Date | string
+  updatedBy?: number | null
 }
 
 export type EmployeeCreateOrConnectWithoutPayslipsInput = {
@@ -527,7 +595,9 @@ export type EmployeeUpdateWithoutPayslipsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type EmployeeUncheckedUpdateWithoutPayslipsInput = {
@@ -539,7 +609,9 @@ export type EmployeeUncheckedUpdateWithoutPayslipsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -582,7 +654,9 @@ export type EmployeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   email?: boolean
   department?: boolean
   createdAt?: boolean
+  createdBy?: boolean
   updatedAt?: boolean
+  updatedBy?: boolean
   payslips?: boolean | Prisma.Employee$payslipsArgs<ExtArgs>
   _count?: boolean | Prisma.EmployeeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["employee"]>
@@ -596,7 +670,9 @@ export type EmployeeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   email?: boolean
   department?: boolean
   createdAt?: boolean
+  createdBy?: boolean
   updatedAt?: boolean
+  updatedBy?: boolean
 }, ExtArgs["result"]["employee"]>
 
 export type EmployeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -608,7 +684,9 @@ export type EmployeeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   email?: boolean
   department?: boolean
   createdAt?: boolean
+  createdBy?: boolean
   updatedAt?: boolean
+  updatedBy?: boolean
 }, ExtArgs["result"]["employee"]>
 
 export type EmployeeSelectScalar = {
@@ -620,10 +698,12 @@ export type EmployeeSelectScalar = {
   email?: boolean
   department?: boolean
   createdAt?: boolean
+  createdBy?: boolean
   updatedAt?: boolean
+  updatedBy?: boolean
 }
 
-export type EmployeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "ippisNumber" | "firstName" | "lastName" | "email" | "department" | "createdAt" | "updatedAt", ExtArgs["result"]["employee"]>
+export type EmployeeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "ippisNumber" | "firstName" | "lastName" | "email" | "department" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy", ExtArgs["result"]["employee"]>
 export type EmployeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   payslips?: boolean | Prisma.Employee$payslipsArgs<ExtArgs>
   _count?: boolean | Prisma.EmployeeCountOutputTypeDefaultArgs<ExtArgs>
@@ -645,7 +725,9 @@ export type $EmployeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     email: string
     department: string | null
     createdAt: Date
+    createdBy: number | null
     updatedAt: Date
+    updatedBy: number | null
   }, ExtArgs["result"]["employee"]>
   composites: {}
 }
@@ -1078,7 +1160,9 @@ export interface EmployeeFieldRefs {
   readonly email: Prisma.FieldRef<"Employee", 'String'>
   readonly department: Prisma.FieldRef<"Employee", 'String'>
   readonly createdAt: Prisma.FieldRef<"Employee", 'DateTime'>
+  readonly createdBy: Prisma.FieldRef<"Employee", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"Employee", 'DateTime'>
+  readonly updatedBy: Prisma.FieldRef<"Employee", 'Int'>
 }
     
 

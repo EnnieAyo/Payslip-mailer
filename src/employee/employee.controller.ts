@@ -22,8 +22,11 @@ export class EmployeeController {
   @ApiResponse({ status: 201, description: 'Employee created', type: EmployeeDto })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
-  create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return this.employeeService.create(createEmployeeDto);
+  create(
+    @Body() createEmployeeDto: CreateEmployeeDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.employeeService.create(createEmployeeDto, user?.id);
   }
 
   @Get()
@@ -62,8 +65,9 @@ export class EmployeeController {
   update(
     @Param('id') id: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
+    @CurrentUser() user: any,
   ) {
-    return this.employeeService.update(+id, updateEmployeeDto);
+    return this.employeeService.update(+id, updateEmployeeDto, user?.id);
   }
 
   @Delete(':id')
@@ -74,7 +78,10 @@ export class EmployeeController {
   @ApiResponse({ status: 200, description: 'Employee deleted' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
-  remove(@Param('id') id: string) {
-    return this.employeeService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ) {
+    return this.employeeService.remove(+id, user?.id);
   }
 }

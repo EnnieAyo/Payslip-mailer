@@ -5,9 +5,10 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { EmailModule } from '../email/email.module';
 import { PdfModule } from '../pdf/pdf.module';
 import { EmployeeModule } from '../employee/employee.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, EmailModule, PdfModule, EmployeeModule],
+  imports: [PrismaModule, EmailModule, PdfModule, EmployeeModule, AuthModule],
   controllers: [PayslipController],
   providers: [PayslipService],
 })

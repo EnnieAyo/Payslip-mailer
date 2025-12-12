@@ -37,6 +37,8 @@ async function main() {
           'users:write',
         ],
         isActive: true,
+        isLocked: false,
+        failedLoginAttempts: 0,
       },
     }),
     prisma.user.create({
@@ -52,6 +54,8 @@ async function main() {
           'employees:read',
         ],
         isActive: true,
+        isLocked: false,
+        failedLoginAttempts: 0,
       },
     }),
   ]);

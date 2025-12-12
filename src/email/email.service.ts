@@ -48,6 +48,32 @@ export class EmailService {
     }
   }
 
+  async sendPasswordResetToken(
+    to: string,
+    token: string,
+    userName: string,
+  ): Promise<boolean> {
+    try {
+      await this.transporter.sendMail({
+        from: process.env.SMTP_FROM,
+        to,
+        subject: 'Password Reset Request - 6-Digit Code',
+        html: `
+          <p>Dear ${userName},</p>
+          <p>You have requested to reset your password. Your password reset code is:</p>
+          <h2 style="font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #007bff;">${token}</h2>
+          <p>This code will expire in 15 minutes.</p>
+          <p>If you did not request this password reset, please ignore this email.</p>
+          <p>Best regards,<br>Payslip Mailer Team</p>
+        `,
+      });
+      return true;
+    } catch (error) {
+      console.error(`Error sending password reset email to ${to}:`, error);
+      return false;
+    }
+  }
+
   async testConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();

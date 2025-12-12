@@ -20,7 +20,9 @@ model Employee {
   email     String  @unique
   department String?
   createdAt DateTime @default(now())
+  createdBy Int?
   updatedAt DateTime @updatedAt
+  updatedBy Int?
 
   payslips Payslip[]
 
@@ -40,7 +42,9 @@ model Payslip {
   emailSent Boolean @default(false)
   emailSentAt DateTime?
   createdAt DateTime @default(now())
+  createdBy Int?
   updatedAt DateTime @updatedAt
+  updatedBy Int?
 
   @@index([ippisNumber])
   @@index([employeeId])
@@ -58,7 +62,9 @@ model PayslipUpload {
   failureCount Int @default(0)
   status    String @default("pending") // pending, processing, completed
   createdAt DateTime @default(now())
+  createdBy Int?
   updatedAt DateTime @updatedAt
+  updatedBy Int?
 
   @@index([uuid])
   @@map("payslip_uploads")
@@ -74,10 +80,56 @@ model User {
   role      String  @default("user") // user, admin, payroll_manager
   permissions String[] @default([]) // comma-separated: payslips:read, payslips:write, employees:read, employees:write, etc.
   isActive  Boolean @default(true)
+  isLocked  Boolean @default(false) // locked after 5 failed login attempts
+  failedLoginAttempts Int @default(0) // tracks consecutive failed attempts
+  lastLoginAt DateTime? // tracks last successful login
   createdAt DateTime @default(now())
+  createdBy Int?
   updatedAt DateTime @updatedAt
+  updatedBy Int?
+
+  passwordResets PasswordReset[] @relation("passwordResets")
+  auditLogs AuditLog[] @relation("auditLogs")
 
   @@index([uuid])
   @@index([email])
   @@map("users")
+}
+
+model PasswordReset {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  userId    Int
+  user      User    @relation("passwordResets", fields: [userId], references: [id], onDelete: Cascade)
+  token     String  @unique // 6-digit numeric token
+  expiresAt DateTime // token expiration time
+  usedAt    DateTime? // when token was used to reset password
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@map("password_resets")
+}
+
+model AuditLog {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  userId    Int? // user who performed the action (nullable for system actions)
+  user      User?   @relation("auditLogs", fields: [userId], references: [id], onDelete: SetNull)
+  action    String // e.g., "LOGIN", "UPDATE_EMPLOYEE", "DELETE_USER", "UPLOAD_PAYSLIP"
+  resource  String? // e.g., "employee", "payslip", "user" (what was affected)
+  resourceId Int? // ID of the affected resource
+  details   Json? // additional context as JSON
+  ipAddress String? // IP address of the requester
+  userAgent String? // browser/client info
+  status    String @default("success") // success, failure
+  errorMessage String? // error details if status is failure
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([resourceId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
