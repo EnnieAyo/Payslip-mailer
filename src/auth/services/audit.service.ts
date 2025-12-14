@@ -40,9 +40,9 @@ export class AuditService {
     page?: number;
     limit?: number;
   }) {
-    const page = filters?.page ?? 0;
+    const page = filters?.page ?? 1;
     const limit = filters?.limit ?? 50;
-    const skip = page * limit;
+    const skip = (page-1>0)? (page-1) * limit : 0;
 
     const where: any = {
       userId: filters?.userId,

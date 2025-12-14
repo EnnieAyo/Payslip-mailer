@@ -7,6 +7,8 @@ import { UnauthorizedException, ConflictException, BadRequestException } from '@
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { permission } from 'process';
+import { create } from 'domain';
+import { last } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -62,7 +64,11 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        permissions: user.permissions,
         emailVerified: user.emailVerified,
+        emailVerifiedAt: user.emailVerifiedAt,
+        twoFactorEnabled: user.twoFactorEnabled,
+        lastLoginAt: user.lastLoginAt,
       },
       message: 'Registration successful. Please check your email to verify your account.',
     };
@@ -123,7 +129,7 @@ export class AuthService {
     if (user.twoFactorEnabled) {
       // Generate and send 2FA token
       const twoFactorToken = await this.generate2FAToken(user.id);
-      
+
       try {
         await this.emailService.send2FAToken(
           user.email,
@@ -169,7 +175,10 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
         permissions: user.permissions,
+        emailVerified: user.emailVerified,
+        emailVerifiedAt: user.emailVerifiedAt,
         twoFactorEnabled: user.twoFactorEnabled,
+        lastLoginAt: user.lastLoginAt,
       },
     };
   }
@@ -489,7 +498,10 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
         permissions: user.permissions,
+        emailVerified: user.emailVerified,
+        emailVerifiedAt: user.emailVerifiedAt,
         twoFactorEnabled: user.twoFactorEnabled,
+        lastLoginAt: user.lastLoginAt,
       },
     };
   }

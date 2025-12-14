@@ -37,18 +37,16 @@ export class EmployeeService {
 
   async findAll(page = 0, limit = 10) {
     const take = limit;
-    const skip = page * limit;
+    const skip = (page-1>0)? (page-1) * limit : 0;
 
-    const [total, data] = await Promise.all([
-      this.prisma.employee.count(),
+    const [data, total] = await Promise.all([
       this.prisma.employee.findMany({
-        include: { payslips: true },
         take,
         skip,
         orderBy: { id: 'asc' },
       }),
+      this.prisma.employee.count(),
     ]);
-
     return {
       data,
       total,

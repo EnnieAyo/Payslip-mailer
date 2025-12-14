@@ -146,7 +146,7 @@ export class PayslipService {
 
   async getPayslipsByEmployee(employeeId: number, page = 0, limit = 10) {
     const take = limit;
-    const skip = page * limit;
+    const skip = (page-1>0)? (page-1) * limit : 0;
 
     const [total, data] = await Promise.all([
       this.prisma.payslip.count({ where: { employeeId } }),
@@ -169,7 +169,7 @@ export class PayslipService {
 
   async getUnsentPayslips(page = 0, limit = 10) {
     const take = limit;
-    const skip = page * limit;
+    const skip = (page-1>0)? (page-1) * limit : 0;
 
     const [total, data] = await Promise.all([
       this.prisma.payslip.count({ where: { emailSent: false } }),

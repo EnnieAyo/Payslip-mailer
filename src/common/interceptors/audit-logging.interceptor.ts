@@ -53,7 +53,7 @@ const AUDITABLE_ENDPOINTS: AuditableEndpoint[] = [
   },
   {
     path: 'auth/reset-password-with-token',
-    action: 'PASSWORD_RESET',
+    action: 'USER_PASSWORD_RESET',
     resource: 'user',
     extractDetails: () => ({
       resetMethod: 'token',
@@ -61,7 +61,7 @@ const AUDITABLE_ENDPOINTS: AuditableEndpoint[] = [
   },
   {
     path: 'auth/reset-password',
-    action: 'PASSWORD_RESET',
+    action: 'ADMIN_PASSWORD_RESET',
     resource: 'user',
     extractResourceId: (body) => body.userId,
     extractDetails: (body) => ({
@@ -229,7 +229,8 @@ export class AuditLoggingInterceptor implements NestInterceptor {
    */
   private findAuditConfig(method: string, path: string): AuditableEndpoint | null {
     // Only audit POST, PUT, DELETE, and certain GET endpoints
-    const auditableMethods = ['POST', 'PUT', 'DELETE', 'GET'];
+    const auditableMethods = ['POST', 'PUT', 'DELETE'];
+    // const auditableMethods = ['POST', 'PUT', 'DELETE', 'GET'];
     if (!auditableMethods.includes(method)) {
       return null;
     }

@@ -11,5 +11,10 @@ export class AuthResponseDto {
     firstName?: string | null;
     lastName?: string | null;
     role: string;
+    permissions: string[];
+    emailVerified: boolean;
+    emailVerifiedAt: Date|null;
+    twoFactorEnabled?: boolean;
+    lastLoginAt: Date|null;
   };
 }
