@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, UsePipes, ValidationPipe, Patch } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -88,5 +88,36 @@ export class EmployeeController {
     @CurrentUser() user: any,
   ) {
     return await this.employeeService.remove(+id, user?.id);
+  }
+
+  @Patch(':id/restore')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('employees:write')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Restore a soft-deleted employee' })
+  @ApiResponse({ status: 200, description: 'Employee restored' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  @ApiResponse({ status: 404, description: 'Deleted employee not found' })
+  async restore(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ) {
+    return await this.employeeService.restore(+id, user?.id);
+  }
+
+  @Get('deleted/list')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('employees:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all soft-deleted employees' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Deleted employees retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async findDeleted(@Query() pagination: PaginationDto) {
+    const { page = 1, limit = 10 } = pagination || {};
+    return await this.employeeService.findDeleted(page, limit);
   }
 }

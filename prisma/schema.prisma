@@ -23,6 +23,7 @@ model Employee {
   createdBy Int?
   updatedAt DateTime @updatedAt
   updatedBy Int?
+  deletedAt DateTime?
 
   payslips Payslip[]
 
@@ -45,6 +46,7 @@ model Payslip {
   createdBy Int?
   updatedAt DateTime @updatedAt
   updatedBy Int?
+  deletedAt DateTime?
 
   @@index([ippisNumber])
   @@index([employeeId])
@@ -65,6 +67,7 @@ model PayslipUpload {
   createdBy Int?
   updatedAt DateTime @updatedAt
   updatedBy Int?
+  deletedAt DateTime?
 
   @@index([uuid])
   @@map("payslip_uploads")
@@ -90,6 +93,7 @@ model User {
   createdBy Int?
   updatedAt DateTime @updatedAt
   updatedBy Int?
+  deletedAt DateTime?
 
   passwordResets PasswordReset[] @relation("passwordResets")
   auditLogs AuditLog[] @relation("auditLogs")
@@ -181,6 +185,7 @@ model Role {
   createdBy   Int?
   updatedAt   DateTime @updatedAt
   updatedBy   Int?
+  deletedAt   DateTime?
 
   @@index([uuid])
   @@index([name])

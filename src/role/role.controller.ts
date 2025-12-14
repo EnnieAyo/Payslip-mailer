@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Patch } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -86,5 +86,27 @@ export class RoleController {
   @ApiResponse({ status: 409, description: 'Cannot delete system roles' })
   async delete(@Param('name') name: string, @CurrentUser() user: any) {
     return await this.roleService.delete(name, user?.id);
+  }
+
+  @Patch(':name/restore')
+  @Permissions('roles:write')
+  @ApiOperation({ summary: 'Restore a soft-deleted role' })
+  @ApiParam({ name: 'name', description: 'Role name' })
+  @ApiResponse({ status: 200, description: 'Role restored' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  @ApiResponse({ status: 404, description: 'Deleted role not found' })
+  async restore(@Param('name') name: string, @CurrentUser() user: any) {
+    return await this.roleService.restore(name, user?.id);
+  }
+
+  @Get('deleted/list')
+  @Permissions('roles:read')
+  @ApiOperation({ summary: 'Get all soft-deleted roles' })
+  @ApiResponse({ status: 200, description: 'Deleted roles retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async findDeleted() {
+    return await this.roleService.findDeleted();
   }
 }

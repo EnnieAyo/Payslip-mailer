@@ -121,4 +121,29 @@ export class UserController {
   async unlockUser(@Param('id') id: string, @CurrentUser() user: any) {
     return await this.userService.unlockUser(+id, user?.id);
   }
+
+  @Patch(':id/restore')
+  @Permissions('users:write')
+  @ApiOperation({ summary: 'Restore a soft-deleted user' })
+  @ApiParam({ name: 'id', description: 'User numeric ID' })
+  @ApiResponse({ status: 200, description: 'User restored' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  @ApiResponse({ status: 404, description: 'Deleted user not found' })
+  async restore(@Param('id') id: string, @CurrentUser() user: any) {
+    return await this.userService.restore(+id, user?.id);
+  }
+
+  @Get('deleted/list')
+  @Permissions('users:read')
+  @ApiOperation({ summary: 'Get all soft-deleted users' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Deleted users retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async findDeleted(@Query() pagination: PaginationDto) {
+    const { page = 1, limit = 10 } = pagination || {};
+    return await this.userService.findDeleted(page, limit);
+  }
 }

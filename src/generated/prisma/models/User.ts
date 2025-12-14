@@ -59,6 +59,7 @@ export type UserMinAggregateOutputType = {
   createdBy: number | null
   updatedAt: Date | null
   updatedBy: number | null
+  deletedAt: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -80,6 +81,7 @@ export type UserMaxAggregateOutputType = {
   createdBy: number | null
   updatedAt: Date | null
   updatedBy: number | null
+  deletedAt: Date | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -102,6 +104,7 @@ export type UserCountAggregateOutputType = {
   createdBy: number
   updatedAt: number
   updatedBy: number
+  deletedAt: number
   _all: number
 }
 
@@ -139,6 +142,7 @@ export type UserMinAggregateInputType = {
   createdBy?: true
   updatedAt?: true
   updatedBy?: true
+  deletedAt?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -160,6 +164,7 @@ export type UserMaxAggregateInputType = {
   createdBy?: true
   updatedAt?: true
   updatedBy?: true
+  deletedAt?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -182,6 +187,7 @@ export type UserCountAggregateInputType = {
   createdBy?: true
   updatedAt?: true
   updatedBy?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -291,6 +297,7 @@ export type UserGroupByOutputType = {
   createdBy: number | null
   updatedAt: Date
   updatedBy: number | null
+  deletedAt: Date | null
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -336,6 +343,7 @@ export type UserWhereInput = {
   createdBy?: Prisma.IntNullableFilter<"User"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"User"> | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordResets?: Prisma.PasswordResetListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   verificationTokens?: Prisma.VerificationTokenListRelationFilter
@@ -362,6 +370,7 @@ export type UserOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordResets?: Prisma.PasswordResetOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   verificationTokens?: Prisma.VerificationTokenOrderByRelationAggregateInput
@@ -391,6 +400,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.IntNullableFilter<"User"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"User"> | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordResets?: Prisma.PasswordResetListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   verificationTokens?: Prisma.VerificationTokenListRelationFilter
@@ -417,6 +427,7 @@ export type UserOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -447,6 +458,7 @@ export type UserScalarWhereWithAggregatesInput = {
   createdBy?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedBy?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
@@ -468,6 +480,7 @@ export type UserCreateInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
@@ -494,6 +507,7 @@ export type UserUncheckedCreateInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
@@ -519,6 +533,7 @@ export type UserUpdateInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
@@ -545,6 +560,7 @@ export type UserUncheckedUpdateInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -571,6 +587,7 @@ export type UserCreateManyInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -592,6 +609,7 @@ export type UserUpdateManyMutationInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -614,6 +632,7 @@ export type UserUncheckedUpdateManyInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StringNullableListFilter<$PrismaModel = never> = {
@@ -644,6 +663,7 @@ export type UserCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
@@ -672,6 +692,7 @@ export type UserMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -693,6 +714,7 @@ export type UserMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
@@ -798,6 +820,7 @@ export type UserCreateWithoutPasswordResetsInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
   twoFactorTokens?: Prisma.TwoFactorTokenCreateNestedManyWithoutUserInput
@@ -823,6 +846,7 @@ export type UserUncheckedCreateWithoutPasswordResetsInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
   twoFactorTokens?: Prisma.TwoFactorTokenUncheckedCreateNestedManyWithoutUserInput
@@ -863,6 +887,7 @@ export type UserUpdateWithoutPasswordResetsInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
   twoFactorTokens?: Prisma.TwoFactorTokenUpdateManyWithoutUserNestedInput
@@ -888,6 +913,7 @@ export type UserUncheckedUpdateWithoutPasswordResetsInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   twoFactorTokens?: Prisma.TwoFactorTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -912,6 +938,7 @@ export type UserCreateWithoutVerificationTokensInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   twoFactorTokens?: Prisma.TwoFactorTokenCreateNestedManyWithoutUserInput
@@ -937,6 +964,7 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   twoFactorTokens?: Prisma.TwoFactorTokenUncheckedCreateNestedManyWithoutUserInput
@@ -977,6 +1005,7 @@ export type UserUpdateWithoutVerificationTokensInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   twoFactorTokens?: Prisma.TwoFactorTokenUpdateManyWithoutUserNestedInput
@@ -1002,6 +1031,7 @@ export type UserUncheckedUpdateWithoutVerificationTokensInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactorTokens?: Prisma.TwoFactorTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1026,6 +1056,7 @@ export type UserCreateWithoutTwoFactorTokensInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
@@ -1051,6 +1082,7 @@ export type UserUncheckedCreateWithoutTwoFactorTokensInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1091,6 +1123,7 @@ export type UserUpdateWithoutTwoFactorTokensInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
@@ -1116,6 +1149,7 @@ export type UserUncheckedUpdateWithoutTwoFactorTokensInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1140,6 +1174,7 @@ export type UserCreateWithoutAuditLogsInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenCreateNestedManyWithoutUserInput
   twoFactorTokens?: Prisma.TwoFactorTokenCreateNestedManyWithoutUserInput
@@ -1165,6 +1200,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedCreateNestedManyWithoutUserInput
   verificationTokens?: Prisma.VerificationTokenUncheckedCreateNestedManyWithoutUserInput
   twoFactorTokens?: Prisma.TwoFactorTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1205,6 +1241,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUpdateManyWithoutUserNestedInput
   twoFactorTokens?: Prisma.TwoFactorTokenUpdateManyWithoutUserNestedInput
@@ -1230,6 +1267,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordResets?: Prisma.PasswordResetUncheckedUpdateManyWithoutUserNestedInput
   verificationTokens?: Prisma.VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
   twoFactorTokens?: Prisma.TwoFactorTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1313,6 +1351,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
   passwordResets?: boolean | Prisma.User$passwordResetsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   verificationTokens?: boolean | Prisma.User$verificationTokensArgs<ExtArgs>
@@ -1340,6 +1379,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1362,6 +1402,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1384,9 +1425,10 @@ export type UserSelectScalar = {
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "email" | "password" | "firstName" | "lastName" | "role" | "permissions" | "isActive" | "isLocked" | "failedLoginAttempts" | "lastLoginAt" | "emailVerified" | "emailVerifiedAt" | "twoFactorEnabled" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "email" | "password" | "firstName" | "lastName" | "role" | "permissions" | "isActive" | "isLocked" | "failedLoginAttempts" | "lastLoginAt" | "emailVerified" | "emailVerifiedAt" | "twoFactorEnabled" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   passwordResets?: boolean | Prisma.User$passwordResetsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
@@ -1425,6 +1467,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdBy: number | null
     updatedAt: Date
     updatedBy: number | null
+    deletedAt: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1871,6 +1914,7 @@ export interface UserFieldRefs {
   readonly createdBy: Prisma.FieldRef<"User", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedBy: Prisma.FieldRef<"User", 'Int'>
+  readonly deletedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 

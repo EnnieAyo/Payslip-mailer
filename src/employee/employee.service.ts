@@ -41,11 +41,12 @@ export class EmployeeService {
 
     const [data, total] = await Promise.all([
       this.prisma.employee.findMany({
+        where: { deletedAt: null },
         take,
         skip,
         orderBy: { id: 'asc' },
       }),
-      this.prisma.employee.count(),
+      this.prisma.employee.count({ where: { deletedAt: null } }),
     ]);
     return {
       data,
@@ -57,8 +58,8 @@ export class EmployeeService {
   }
 
   async findOne(id: number) {
-    const employee = await this.prisma.employee.findUnique({
-      where: { id },
+    const employee = await this.prisma.employee.findFirst({
+      where: { id, deletedAt: null },
       include: {
         payslips: true,
       },
@@ -72,8 +73,8 @@ export class EmployeeService {
   }
 
   async findByIppisNumber(ippisNumber: string) {
-    return this.prisma.employee.findUnique({
-      where: { ippisNumber },
+    return this.prisma.employee.findFirst({
+      where: { ippisNumber, deletedAt: null },
       include: {
         payslips: true,
       },
@@ -81,8 +82,8 @@ export class EmployeeService {
   }
 
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto, userId?: number) {
-    const oldEmployee = await this.prisma.employee.findUnique({
-      where: { id },
+    const oldEmployee = await this.prisma.employee.findFirst({
+      where: { id, deletedAt: null },
     });
 
     const updatedEmployee = await this.prisma.employee.update({
@@ -119,12 +120,13 @@ export class EmployeeService {
   }
 
   async remove(id: number, userId?: number) {
-    const employee = await this.prisma.employee.findUnique({
-      where: { id },
+    const employee = await this.prisma.employee.findFirst({
+      where: { id, deletedAt: null },
     });
 
-    const deleted = await this.prisma.employee.delete({
+    const deleted = await this.prisma.employee.update({
       where: { id },
+      data: { deletedAt: new Date() },
     });
 
     if (userId && employee) {
@@ -144,5 +146,63 @@ export class EmployeeService {
     }
 
     return deleted;
+  }
+
+  /**
+   * Restore a soft-deleted employee
+   */
+  async restore(id: number, userId?: number) {
+    const employee = await this.prisma.employee.findFirst({
+      where: { id, deletedAt: { not: null } },
+    });
+
+    if (!employee) {
+      throw new NotFoundException(`Deleted employee with ID ${id} not found`);
+    }
+
+    const restored = await this.prisma.restore('employee', { id });
+
+    if (userId) {
+      await this.auditService.log({
+        userId,
+        action: 'EMPLOYEE_RESTORED',
+        resource: 'employee',
+        resourceId: id,
+        details: {
+          firstName: employee.firstName,
+          lastName: employee.lastName,
+          ippis: employee.ippisNumber,
+          email: employee.email,
+        },
+        status: 'success',
+      });
+    }
+
+    return restored;
+  }
+
+  /**
+   * Get all soft-deleted employees
+   */
+  async findDeleted(page = 1, limit = 10) {
+    const take = limit;
+    const skip = (page - 1 > 0) ? (page - 1) * limit : 0;
+
+    const [data, total] = await Promise.all([
+      this.prisma.findDeleted('employee', {
+        take,
+        skip,
+        orderBy: { deletedAt: 'desc' },
+      }),
+      this.prisma.employee.count({ where: { deletedAt: { not: null } } }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit: take,
+      totalPages: Math.ceil(total / take) || 0,
+    };
   }
 }

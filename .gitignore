@@ -16,3 +16,4 @@ yarn-error.log*
 *~
 
 /generated/prisma
+logs/

@@ -209,7 +209,9 @@ export class UserService {
   }
 
   async delete(id: number, deleterId?: number) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findFirst({ 
+      where: { id, deletedAt: null } 
+    });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -220,7 +222,10 @@ export class UserService {
       throw new BadRequestException('Cannot delete your own account');
     }
 
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.update({ 
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
 
     if (deleterId) {
       await this.auditService.log({
@@ -240,7 +245,9 @@ export class UserService {
   }
 
   async updatePermissions(id: number, permissions: string[], updaterId?: number) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findFirst({ 
+      where: { id, deletedAt: null } 
+    });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -288,7 +295,9 @@ export class UserService {
   }
 
   async toggleActivation(id: number, updaterId?: number) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findFirst({ 
+      where: { id, deletedAt: null } 
+    });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -339,8 +348,10 @@ export class UserService {
     return updatedUser;
   }
 
-  async unlockUser(id: number, updaterId?: number) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+  async unlockUser(id: number, unlockerId?: number) {
+    const user = await this.prisma.user.findFirst({ 
+      where: { id, deletedAt: null } 
+    });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -351,7 +362,7 @@ export class UserService {
       data: {
         isLocked: false,
         failedLoginAttempts: 0,
-        updatedBy: updaterId,
+        updatedBy: unlockerId,
       },
       select: {
         id: true,
@@ -370,9 +381,9 @@ export class UserService {
       },
     });
 
-    if (updaterId) {
+    if (unlockerId) {
       await this.auditService.log({
-        userId: updaterId,
+        userId: unlockerId,
         action: 'USER_UNLOCKED',
         resource: 'user',
         resourceId: id,
@@ -384,5 +395,61 @@ export class UserService {
     }
 
     return updatedUser;
+  }
+
+  /**
+   * Restore a soft-deleted user
+   */
+  async restore(id: number, restorerId?: number) {
+    const user = await this.prisma.user.findFirst({
+      where: { id, deletedAt: { not: null } },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`Deleted user with ID ${id} not found`);
+    }
+
+    const restored = await this.prisma.restore('user', { id });
+
+    if (restorerId) {
+      await this.auditService.log({
+        userId: restorerId,
+        action: 'USER_RESTORED',
+        resource: 'user',
+        resourceId: id,
+        details: {
+          email: user.email,
+          role: user.role,
+        },
+        status: 'success',
+      });
+    }
+
+    return restored;
+  }
+
+  /**
+   * Get all soft-deleted users
+   */
+  async findDeleted(page = 1, limit = 10) {
+    const take = limit;
+    const skip = (page - 1 > 0) ? (page - 1) * limit : 0;
+
+    const [data, total] = await Promise.all([
+      this.prisma.findDeleted('user', {
+        take,
+        skip,
+        orderBy: { deletedAt: 'desc' },
+      }),
+      this.prisma.user.count({ where: { deletedAt: { not: null } } }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit: take,
+      totalPages: Math.ceil(total / take) || 0,
+    };
   }
 }

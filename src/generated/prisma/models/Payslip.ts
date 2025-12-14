@@ -54,6 +54,7 @@ export type PayslipMinAggregateOutputType = {
   createdBy: number | null
   updatedAt: Date | null
   updatedBy: number | null
+  deletedAt: Date | null
 }
 
 export type PayslipMaxAggregateOutputType = {
@@ -70,6 +71,7 @@ export type PayslipMaxAggregateOutputType = {
   createdBy: number | null
   updatedAt: Date | null
   updatedBy: number | null
+  deletedAt: Date | null
 }
 
 export type PayslipCountAggregateOutputType = {
@@ -86,6 +88,7 @@ export type PayslipCountAggregateOutputType = {
   createdBy: number
   updatedAt: number
   updatedBy: number
+  deletedAt: number
   _all: number
 }
 
@@ -118,6 +121,7 @@ export type PayslipMinAggregateInputType = {
   createdBy?: true
   updatedAt?: true
   updatedBy?: true
+  deletedAt?: true
 }
 
 export type PayslipMaxAggregateInputType = {
@@ -134,6 +138,7 @@ export type PayslipMaxAggregateInputType = {
   createdBy?: true
   updatedAt?: true
   updatedBy?: true
+  deletedAt?: true
 }
 
 export type PayslipCountAggregateInputType = {
@@ -150,6 +155,7 @@ export type PayslipCountAggregateInputType = {
   createdBy?: true
   updatedAt?: true
   updatedBy?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -253,6 +259,7 @@ export type PayslipGroupByOutputType = {
   createdBy: number | null
   updatedAt: Date
   updatedBy: number | null
+  deletedAt: Date | null
   _count: PayslipCountAggregateOutputType | null
   _avg: PayslipAvgAggregateOutputType | null
   _sum: PayslipSumAggregateOutputType | null
@@ -292,6 +299,7 @@ export type PayslipWhereInput = {
   createdBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
 }
 
@@ -309,6 +317,7 @@ export type PayslipOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   employee?: Prisma.EmployeeOrderByWithRelationInput
 }
 
@@ -329,6 +338,7 @@ export type PayslipWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
 }, "id" | "uuid">
 
@@ -346,6 +356,7 @@ export type PayslipOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PayslipCountOrderByAggregateInput
   _avg?: Prisma.PayslipAvgOrderByAggregateInput
   _max?: Prisma.PayslipMaxOrderByAggregateInput
@@ -370,6 +381,7 @@ export type PayslipScalarWhereWithAggregatesInput = {
   createdBy?: Prisma.IntNullableWithAggregatesFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Payslip"> | Date | string
   updatedBy?: Prisma.IntNullableWithAggregatesFilter<"Payslip"> | number | null
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Payslip"> | Date | string | null
 }
 
 export type PayslipCreateInput = {
@@ -384,6 +396,7 @@ export type PayslipCreateInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
   employee: Prisma.EmployeeCreateNestedOneWithoutPayslipsInput
 }
 
@@ -401,6 +414,7 @@ export type PayslipUncheckedCreateInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
 }
 
 export type PayslipUpdateInput = {
@@ -415,6 +429,7 @@ export type PayslipUpdateInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayslipsNestedInput
 }
 
@@ -432,6 +447,7 @@ export type PayslipUncheckedUpdateInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PayslipCreateManyInput = {
@@ -448,6 +464,7 @@ export type PayslipCreateManyInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
 }
 
 export type PayslipUpdateManyMutationInput = {
@@ -462,6 +479,7 @@ export type PayslipUpdateManyMutationInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PayslipUncheckedUpdateManyInput = {
@@ -478,6 +496,7 @@ export type PayslipUncheckedUpdateManyInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PayslipListRelationFilter = {
@@ -504,6 +523,7 @@ export type PayslipCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type PayslipAvgOrderByAggregateInput = {
@@ -527,6 +547,7 @@ export type PayslipMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type PayslipMinOrderByAggregateInput = {
@@ -543,6 +564,7 @@ export type PayslipMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type PayslipSumOrderByAggregateInput = {
@@ -602,10 +624,6 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type PayslipCreateWithoutEmployeeInput = {
   uuid?: string
   ippisNumber: string
@@ -618,6 +636,7 @@ export type PayslipCreateWithoutEmployeeInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
 }
 
 export type PayslipUncheckedCreateWithoutEmployeeInput = {
@@ -633,6 +652,7 @@ export type PayslipUncheckedCreateWithoutEmployeeInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
 }
 
 export type PayslipCreateOrConnectWithoutEmployeeInput = {
@@ -678,6 +698,7 @@ export type PayslipScalarWhereInput = {
   createdBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
 }
 
 export type PayslipCreateManyEmployeeInput = {
@@ -693,6 +714,7 @@ export type PayslipCreateManyEmployeeInput = {
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
+  deletedAt?: Date | string | null
 }
 
 export type PayslipUpdateWithoutEmployeeInput = {
@@ -707,6 +729,7 @@ export type PayslipUpdateWithoutEmployeeInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PayslipUncheckedUpdateWithoutEmployeeInput = {
@@ -722,6 +745,7 @@ export type PayslipUncheckedUpdateWithoutEmployeeInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PayslipUncheckedUpdateManyWithoutEmployeeInput = {
@@ -737,6 +761,7 @@ export type PayslipUncheckedUpdateManyWithoutEmployeeInput = {
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -755,6 +780,7 @@ export type PayslipSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payslip"]>
 
@@ -772,6 +798,7 @@ export type PayslipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payslip"]>
 
@@ -789,6 +816,7 @@ export type PayslipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payslip"]>
 
@@ -806,9 +834,10 @@ export type PayslipSelectScalar = {
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
 }
 
-export type PayslipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "ippisNumber" | "fileName" | "filePath" | "pdfContent" | "employeeId" | "emailSent" | "emailSentAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy", ExtArgs["result"]["payslip"]>
+export type PayslipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "ippisNumber" | "fileName" | "filePath" | "pdfContent" | "employeeId" | "emailSent" | "emailSentAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy" | "deletedAt", ExtArgs["result"]["payslip"]>
 export type PayslipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
 }
@@ -838,6 +867,7 @@ export type $PayslipPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     createdBy: number | null
     updatedAt: Date
     updatedBy: number | null
+    deletedAt: Date | null
   }, ExtArgs["result"]["payslip"]>
   composites: {}
 }
@@ -1275,6 +1305,7 @@ export interface PayslipFieldRefs {
   readonly createdBy: Prisma.FieldRef<"Payslip", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"Payslip", 'DateTime'>
   readonly updatedBy: Prisma.FieldRef<"Payslip", 'Int'>
+  readonly deletedAt: Prisma.FieldRef<"Payslip", 'DateTime'>
 }
     
 

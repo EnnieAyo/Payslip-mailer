@@ -75,8 +75,8 @@ export class RoleService {
   }
 
   async findOne(name: string) {
-    const role = await this.prisma.role.findUnique({
-      where: { name },
+    const role = await this.prisma.role.findFirst({
+      where: { name, deletedAt: null },
       select: {
         name: true,
         description: true,
@@ -92,8 +92,8 @@ export class RoleService {
   }
 
   async update(name: string, updateRoleDto: UpdateRoleDto, updaterId?: number) {
-    const role = await this.prisma.role.findUnique({
-      where: { name },
+    const role = await this.prisma.role.findFirst({
+      where: { name, deletedAt: null },
     });
 
     if (!role) {
@@ -137,8 +137,8 @@ export class RoleService {
   }
 
   async delete(name: string, deleterId?: number) {
-    const role = await this.prisma.role.findUnique({
-      where: { name },
+    const role = await this.prisma.role.findFirst({
+      where: { name, deletedAt: null },
     });
 
     if (!role) {
@@ -150,8 +150,9 @@ export class RoleService {
       throw new ConflictException('Cannot delete system roles');
     }
 
-    await this.prisma.role.delete({
+    await this.prisma.role.update({
       where: { name },
+      data: { deletedAt: new Date() },
     });
 
     if (deleterId) {
@@ -168,6 +169,45 @@ export class RoleService {
     }
 
     return { message: 'Role deleted successfully' };
+  }
+
+  /**
+   * Restore a soft-deleted role
+   */
+  async restore(name: string, restorerId?: number) {
+    const role = await this.prisma.role.findFirst({
+      where: { name, deletedAt: { not: null } },
+    });
+
+    if (!role) {
+      throw new NotFoundException(`Deleted role '${name}' not found`);
+    }
+
+    const restored = await this.prisma.restore('role', { name });
+
+    if (restorerId) {
+      await this.auditService.log({
+        userId: restorerId,
+        action: 'ROLE_RESTORED',
+        resource: 'role',
+        details: {
+          name: role.name,
+          permissions: role.permissions,
+        },
+        status: 'success',
+      });
+    }
+
+    return restored;
+  }
+
+  /**
+   * Get all soft-deleted roles
+   */
+  async findDeleted() {
+    return this.prisma.findDeleted('role', {
+      orderBy: { deletedAt: 'desc' },
+    });
   }
 
   async getAvailablePermissions() {
