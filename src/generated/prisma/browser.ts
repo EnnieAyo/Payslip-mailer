@@ -57,3 +57,8 @@ export type TwoFactorToken = Prisma.TwoFactorTokenModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model Role
+ * 
+ */
+export type Role = Prisma.RoleModel

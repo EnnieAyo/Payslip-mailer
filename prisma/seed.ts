@@ -15,6 +15,53 @@ async function main() {
   await prisma.payslip.deleteMany();
   await prisma.employee.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.role.deleteMany();
+
+  // Seed roles first
+  const roles = await Promise.all([
+    prisma.role.create({
+      data: {
+        name: 'admin',
+        description: 'Full system access',
+        permissions: [
+          'payslips:read',
+          'payslips:write',
+          'employees:read',
+          'employees:write',
+          'users:read',
+          'users:write',
+          'audit:read',
+          'roles:read',
+          'roles:write',
+        ],
+        isSystem: true,
+      },
+    }),
+    prisma.role.create({
+      data: {
+        name: 'payroll_manager',
+        description: 'Manages payslip uploads and distribution',
+        permissions: [
+          'payslips:read',
+          'payslips:write',
+          'employees:read',
+          'employees:write',
+          'audit:read',
+        ],
+        isSystem: true,
+      },
+    }),
+    prisma.role.create({
+      data: {
+        name: 'user',
+        description: 'Basic user access',
+        permissions: ['payslips:read', 'employees:read'],
+        isSystem: true,
+      },
+    }),
+  ]);
+
+  console.log(`Seeded ${roles.length} roles`);
 
   // Seed users with admin and payroll manager roles
   const adminPassword = await bcrypt.hash('admin123456', 10);
@@ -35,10 +82,15 @@ async function main() {
           'employees:write',
           'users:read',
           'users:write',
+          'audit:read',
+          'roles:read',
+          'roles:write',
         ],
         isActive: true,
         isLocked: false,
         failedLoginAttempts: 0,
+        emailVerified: true,
+        emailVerifiedAt: new Date(),
       },
     }),
     prisma.user.create({

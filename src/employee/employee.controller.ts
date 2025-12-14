@@ -31,7 +31,7 @@ export class EmployeeController {
   }
 
   @Get()
-  // @UseGuards(JwtAuthGuard, RbacGuard)
+  @UseGuards(JwtAuthGuard, RbacGuard)
   @Permissions('employees:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all employees' })

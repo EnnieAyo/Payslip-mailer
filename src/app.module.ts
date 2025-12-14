@@ -6,6 +6,8 @@ import { EmployeeModule } from './employee/employee.module';
 import { EmailModule } from './email/email.module';
 import { AuthModule } from './auth/auth.module';
 import { AuditModule } from './audit/audit.module';
+import { UserModule } from './user/user.module';
+import { RoleModule } from './role/role.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -26,6 +28,8 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
     EmployeeModule,
     EmailModule,
     AuditModule,
+    UserModule,
+    RoleModule,
     ThrottlerModule.forRoot([
       {
         name: 'short',
