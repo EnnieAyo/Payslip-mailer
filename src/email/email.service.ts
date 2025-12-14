@@ -83,4 +83,60 @@ export class EmailService {
       return false;
     }
   }
+
+  async sendEmailVerification(
+    to: string,
+    token: string,
+    userName: string,
+  ): Promise<boolean> {
+    try {
+      const verificationUrl = `${process.env.APP_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
+      
+      await this.transporter.sendMail({
+        from: process.env.SMTP_FROM,
+        to,
+        subject: 'Verify Your Email Address',
+        html: `
+          <p>Dear ${userName},</p>
+          <p>Thank you for registering. Please verify your email address by clicking the link below:</p>
+          <p><a href="${verificationUrl}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Verify Email</a></p>
+          <p>Or copy and paste this link into your browser:</p>
+          <p style="word-break: break-all;">${verificationUrl}</p>
+          <p>This link will expire in 24 hours.</p>
+          <p>If you did not create an account, please ignore this email.</p>
+          <p>Best regards,<br>Payslip Mailer Team</p>
+        `,
+      });
+      return true;
+    } catch (error) {
+      console.error(`Error sending verification email to ${to}:`, error);
+      return false;
+    }
+  }
+
+  async send2FAToken(
+    to: string,
+    token: string,
+    userName: string,
+  ): Promise<boolean> {
+    try {
+      await this.transporter.sendMail({
+        from: process.env.SMTP_FROM,
+        to,
+        subject: 'Your Two-Factor Authentication Code',
+        html: `
+          <p>Dear ${userName},</p>
+          <p>Your two-factor authentication code is:</p>
+          <h2 style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #28a745; text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">${token}</h2>
+          <p>This code will expire in 10 minutes.</p>
+          <p>If you did not attempt to log in, please secure your account immediately.</p>
+          <p>Best regards,<br>Payslip Mailer Team</p>
+        `,
+      });
+      return true;
+    } catch (error) {
+      console.error(`Error sending 2FA token email to ${to}:`, error);
+      return false;
+    }
+  }
 }

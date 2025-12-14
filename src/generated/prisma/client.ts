@@ -63,6 +63,16 @@ export type User = Prisma.UserModel
  */
 export type PasswordReset = Prisma.PasswordResetModel
 /**
+ * Model VerificationToken
+ * 
+ */
+export type VerificationToken = Prisma.VerificationTokenModel
+/**
+ * Model TwoFactorToken
+ * 
+ */
+export type TwoFactorToken = Prisma.TwoFactorTokenModel
+/**
  * Model AuditLog
  * 
  */

@@ -83,6 +83,9 @@ model User {
   isLocked  Boolean @default(false) // locked after 5 failed login attempts
   failedLoginAttempts Int @default(0) // tracks consecutive failed attempts
   lastLoginAt DateTime? // tracks last successful login
+  emailVerified Boolean @default(false) // email verification status
+  emailVerifiedAt DateTime? // when email was verified
+  twoFactorEnabled Boolean @default(false) // 2FA toggle
   createdAt DateTime @default(now())
   createdBy Int?
   updatedAt DateTime @updatedAt
@@ -90,6 +93,8 @@ model User {
 
   passwordResets PasswordReset[] @relation("passwordResets")
   auditLogs AuditLog[] @relation("auditLogs")
+  verificationTokens VerificationToken[] @relation("verificationTokens")
+  twoFactorTokens TwoFactorToken[] @relation("twoFactorTokens")
 
   @@index([uuid])
   @@index([email])
@@ -109,6 +114,37 @@ model PasswordReset {
   @@index([userId])
   @@index([token])
   @@map("password_resets")
+}
+
+model VerificationToken {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  userId    Int
+  user      User    @relation("verificationTokens", fields: [userId], references: [id], onDelete: Cascade)
+  token     String  @unique // unique verification token
+  type      String  // "email_verification" or "email_change"
+  expiresAt DateTime // token expiration time
+  usedAt    DateTime? // when token was used
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@map("verification_tokens")
+}
+
+model TwoFactorToken {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique @default(uuid())
+  userId    Int
+  user      User    @relation("twoFactorTokens", fields: [userId], references: [id], onDelete: Cascade)
+  token     String  @unique // 6-digit numeric token
+  expiresAt DateTime // token expiration time (10 minutes)
+  usedAt    DateTime? // when token was used
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+  @@map("two_factor_tokens")
 }
 
 model AuditLog {

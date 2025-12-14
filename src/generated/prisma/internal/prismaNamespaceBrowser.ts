@@ -56,6 +56,8 @@ export const ModelName = {
   PayslipUpload: 'PayslipUpload',
   User: 'User',
   PasswordReset: 'PasswordReset',
+  VerificationToken: 'VerificationToken',
+  TwoFactorToken: 'TwoFactorToken',
   AuditLog: 'AuditLog'
 } as const
 
@@ -142,6 +144,9 @@ export const UserScalarFieldEnum = {
   isLocked: 'isLocked',
   failedLoginAttempts: 'failedLoginAttempts',
   lastLoginAt: 'lastLoginAt',
+  emailVerified: 'emailVerified',
+  emailVerifiedAt: 'emailVerifiedAt',
+  twoFactorEnabled: 'twoFactorEnabled',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
@@ -162,6 +167,33 @@ export const PasswordResetScalarFieldEnum = {
 } as const
 
 export type PasswordResetScalarFieldEnum = (typeof PasswordResetScalarFieldEnum)[keyof typeof PasswordResetScalarFieldEnum]
+
+
+export const VerificationTokenScalarFieldEnum = {
+  id: 'id',
+  uuid: 'uuid',
+  userId: 'userId',
+  token: 'token',
+  type: 'type',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+export const TwoFactorTokenScalarFieldEnum = {
+  id: 'id',
+  uuid: 'uuid',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type TwoFactorTokenScalarFieldEnum = (typeof TwoFactorTokenScalarFieldEnum)[keyof typeof TwoFactorTokenScalarFieldEnum]
 
 
 export const AuditLogScalarFieldEnum = {

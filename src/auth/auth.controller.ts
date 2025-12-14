@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -7,10 +7,14 @@ import { ResetPasswordWithTokenDto } from './dto/reset-password-with-token.dto';
 import { UnlockUserDto } from './dto/unlock-user.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { VerifyEmailDto, ResendVerificationDto } from './dto/verify-email.dto';
+import { Verify2FADto, Toggle2FADto } from './dto/two-factor.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RbacGuard } from './guards/rbac.guard';
 import { Permissions } from './decorators/permissions.decorator';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { TwoFactorResponseDto } from './dto/two-factor-response.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -31,7 +35,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user and get JWT token' })
   @ApiResponse({ status: 200, description: 'Login successful', type: AuthResponseDto })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
+  async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto|TwoFactorResponseDto> {
     return this.authService.login(loginDto);
   }
 
@@ -96,5 +100,44 @@ export class AuthController {
         lastName: result.lastName,
       },
     };
+  }
+
+  @Get('verify-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify email address with token' })
+  @ApiResponse({ status: 200, description: 'Email verified successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  async verifyEmail(@Query('token') token: string) {
+    return this.authService.verifyEmail(token);
+  }
+
+  @Post('resend-verification')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resend email verification link' })
+  @ApiResponse({ status: 200, description: 'Verification email sent' })
+  @ApiResponse({ status: 400, description: 'User not found or already verified' })
+  async resendVerification(@Body() resendVerificationDto: ResendVerificationDto) {
+    return this.authService.resendEmailVerification(resendVerificationDto.email);
+  }
+
+  @Post('verify-2fa')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify 2FA token and complete login' })
+  @ApiResponse({ status: 200, description: 'Login successful', type: AuthResponseDto })
+  @ApiResponse({ status: 401, description: 'Invalid 2FA token' })
+  async verify2FA(@Body() verify2FADto: Verify2FADto) {
+    return this.authService.verify2FAToken(verify2FADto.userId, verify2FADto.token);
+  }
+
+  @Post('toggle-2fa')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Enable or disable 2FA for current user' })
+  @ApiResponse({ status: 200, description: '2FA toggled successfully' })
+  @ApiResponse({ status: 400, description: 'Email not verified' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async toggle2FA(@Body() toggle2FADto: Toggle2FADto, @CurrentUser() user: any) {
+    return this.authService.toggle2FA(user.id, toggle2FADto.enabled);
   }
 }
