@@ -151,6 +151,7 @@ export class PayslipService {
     const [total, data] = await Promise.all([
       this.prisma.payslip.count({ where: { employeeId } }),
       this.prisma.payslip.findMany({
+        omit: { pdfContent: true, filePath: true },
         where: { employeeId },
         take,
         skip,
@@ -174,6 +175,7 @@ export class PayslipService {
     const [total, data] = await Promise.all([
       this.prisma.payslip.count({ where: { emailSent: false } }),
       this.prisma.payslip.findMany({
+        omit: { pdfContent: true, filePath: true },
         where: { emailSent: false },
         include: { employee: true },
         take,
@@ -212,6 +214,7 @@ export class PayslipService {
 
       if (emailSent) {
         const updated = await this.prisma.payslip.update({
+          omit: { pdfContent: true, filePath: true },
           where: { id: payslipId },
           data: {
             emailSent: true,

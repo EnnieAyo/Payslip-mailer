@@ -1,21 +1,22 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import * as pdfParse from 'pdf-parse';
 import * as fs from 'fs';
 import * as path from 'path';
 import JSZip from 'jszip';
+import PdfParse from 'pdf-parse';
 
 @Injectable()
 export class PdfService {
   async extractIppisFromPdf(pdfBuffer: Buffer): Promise<string | null> {
     try {
-      const data = await pdfParse(pdfBuffer);
+      const data = await PdfParse(pdfBuffer);
       const text = data.text;
 
-      // Extract IPPIS number - adjust regex based on your payslip format
-      // Example format: "IPPIS Number: IPPIS001" or similar
-      const ippisMatch = text.match(/IPPIS\s*:?\s*([A-Z0-9]+)/i);
+      // Extract IPPIS number - matches formats like:
+      // "IPPIS Number: 96426", "IPPIS Number: FTC96426", "IPPIS Number: TI96426", "IPPIS Number: NA96426"
+      // Also handles "IPPIS: 96426" or "IPPIS 96426"
+      const ippisMatch = text.match(/IPPIS\s*(?:Number)?\s*:?\s*([A-Z0-9]+)/i);
       if (ippisMatch && ippisMatch[1]) {
-        return ippisMatch[1].trim();
+        return ippisMatch[1].replace('Step', '').trim();
       }
 
       return null;
@@ -30,7 +31,7 @@ export class PdfService {
     uploadId: string,
   ): Promise<{ ippisNumber: string|null; pdfBuffer: Buffer }[]> {
     try {
-      const data = await pdfParse(pdfBuffer);
+      // const data = await pdfParse(pdfBuffer);
 
       // This is a basic implementation
       // For production, you may need to use more advanced PDF splitting libraries
@@ -43,7 +44,9 @@ export class PdfService {
         },
       ];
 
-      return result.filter((r) => r.ippisNumber !== null);
+      console.log('result',result)
+      return result;
+      // return result.filter((r) => r.ippisNumber !== null);
     } catch (error) {
       console.error('Error splitting PDF:', error);
       throw new BadRequestException('Failed to split PDF file');

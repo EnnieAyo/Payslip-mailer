@@ -123,6 +123,8 @@ export class PayslipController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
   async resendPayslip(@Param('payslipId') payslipId: string) {
-    return this.payslipService.resendPayslip(+payslipId);
+    const result = await this.payslipService.resendPayslip(+payslipId);
+    // const { pdfContent, filePath, ...rest } = result;
+    return result;
   }
 }

@@ -91,7 +91,7 @@ export class EmailService {
   ): Promise<boolean> {
     try {
       const verificationUrl = `${process.env.APP_URL || 'http://localhost:3000'}/auth/verify-email?token=${token}`;
-      
+
       await this.transporter.sendMail({
         from: process.env.SMTP_FROM,
         to,

@@ -1,14 +1,17 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, UsePipes, ValidationPipe, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query, UsePipes, ValidationPipe, Patch, UseInterceptors, UploadedFile, Res, Header } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { EmployeeDto } from './dto/employee.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RbacGuard } from '../auth/guards/rbac.guard';
 import { Permissions } from '../auth/decorators/permissions.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
+import { BulkUploadResultDto } from './dto/bulk-upload.dto';
 
 @ApiTags('Employees')
 @Controller('employees')
@@ -119,5 +122,62 @@ export class EmployeeController {
   async findDeleted(@Query() pagination: PaginationDto) {
     const { page = 1, limit = 10 } = pagination || {};
     return await this.employeeService.findDeleted(page, limit);
+  }
+
+  @Get('bulk-upload/template')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('employees:write')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Download Excel template for bulk employee upload' })
+  @Header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  @Header('Content-Disposition', 'attachment; filename=employee-upload-template.xlsx')
+  @ApiResponse({ status: 200, description: 'Excel template file' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async downloadTemplate(@Res() res: Response) {
+    const buffer = this.employeeService.generateTemplate();
+    res.send(buffer);
+  }
+
+  @Post('bulk-upload')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('employees:write')
+  @ApiBearerAuth()
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Bulk upload employees from Excel file' })
+  @ApiBody({
+    description: 'Excel file containing employee data',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Bulk upload completed',
+    type: BulkUploadResultDto,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid file format or data' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async bulkUpload(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: any,
+  ): Promise<BulkUploadResultDto> {
+    if (!file) {
+      throw new Error('No file uploaded');
+    }
+
+    if (!file.originalname.match(/\.(xlsx|xls)$/)) {
+      throw new Error('Only Excel files (.xlsx, .xls) are allowed');
+    }
+
+    return await this.employeeService.bulkUpload(file.buffer, user?.id);
   }
 }

@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../auth/services/audit.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { BulkEmployeeDto, BulkUploadResultDto } from './dto/bulk-upload.dto';
+import * as xlsx from 'xlsx';
+import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class EmployeeService {
@@ -203,6 +207,213 @@ export class EmployeeService {
       page,
       limit: take,
       totalPages: Math.ceil(total / take) || 0,
+    };
+  }
+
+  /**
+   * Generate Excel template for bulk employee upload
+   */
+  generateTemplate(): Buffer {
+    const workbook = xlsx.utils.book_new();
+    
+    // Create sample data with headers
+    const sampleData = [
+      {
+        'IPPIS Number': 'IPP123456',
+        'First Name': 'John',
+        'Last Name': 'Doe',
+        'Email': 'john.doe@example.com',
+        'Department': 'IT Department',
+      },
+      {
+        'IPPIS Number': 'IPP123457',
+        'First Name': 'Jane',
+        'Last Name': 'Smith',
+        'Email': 'jane.smith@example.com',
+        'Department': 'Finance Department',
+      },
+    ];
+
+    const worksheet = xlsx.utils.json_to_sheet(sampleData);
+
+    // Set column widths
+    worksheet['!cols'] = [
+      { wch: 15 }, // IPPIS Number
+      { wch: 15 }, // First Name
+      { wch: 15 }, // Last Name
+      { wch: 30 }, // Email
+      { wch: 20 }, // Department
+    ];
+
+    xlsx.utils.book_append_sheet(workbook, worksheet, 'Employees');
+
+    // Generate buffer
+    return xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+  }
+
+  /**
+   * Bulk upload employees from Excel file
+   */
+  async bulkUpload(
+    fileBuffer: Buffer,
+    userId?: number,
+  ): Promise<BulkUploadResultDto> {
+    const startTime = Date.now();
+    const errors: Array<{ row: number; ippisNumber?: string; errors: string[] }> = [];
+    let successCount = 0;
+    let failureCount = 0;
+
+    try {
+      // Parse Excel file
+      const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      
+      if (!sheetName) {
+        throw new BadRequestException('Excel file has no sheets');
+      }
+
+      const worksheet = workbook.Sheets[sheetName];
+      const rawData: any[] = xlsx.utils.sheet_to_json(worksheet);
+
+      if (!rawData || rawData.length === 0) {
+        throw new BadRequestException('Excel file is empty');
+      }
+
+      const totalRecords = rawData.length;
+
+      // Process each row
+      for (let i = 0; i < rawData.length; i++) {
+        const rowNumber = i + 2; // Excel row number (header is row 1)
+        const row = rawData[i];
+
+        try {
+          // Map Excel columns to DTO
+          const employeeDto = plainToClass(BulkEmployeeDto, {
+            ippisNumber: row['IPPIS Number']?.toString().trim(),
+            firstName: row['First Name']?.toString().trim(),
+            lastName: row['Last Name']?.toString().trim(),
+            email: row['Email']?.toString().trim(),
+            department: row['Department']?.toString().trim(),
+          });
+
+          // Validate DTO
+          const validationErrors = await validate(employeeDto);
+          
+          if (validationErrors.length > 0) {
+            const errorMessages = validationErrors.map(
+              (error) => Object.values(error.constraints || {}).join(', '),
+            );
+            
+            errors.push({
+              row: rowNumber,
+              ippisNumber: row['IPPIS Number'],
+              errors: errorMessages,
+            });
+            failureCount++;
+            continue;
+          }
+
+          // Check for duplicate IPPIS number in database
+          const existingEmployee = await this.prisma.employee.findFirst({
+            where: { 
+              ippisNumber: employeeDto.ippisNumber,
+              deletedAt: null,
+            },
+          });
+
+          if (existingEmployee) {
+            errors.push({
+              row: rowNumber,
+              ippisNumber: employeeDto.ippisNumber,
+              errors: [`Employee with IPPIS ${employeeDto.ippisNumber} already exists`],
+            });
+            failureCount++;
+            continue;
+          }
+
+          // Check for duplicate email in database
+          const existingEmail = await this.prisma.employee.findFirst({
+            where: { 
+              email: employeeDto.email,
+              deletedAt: null,
+            },
+          });
+
+          if (existingEmail) {
+            errors.push({
+              row: rowNumber,
+              ippisNumber: employeeDto.ippisNumber,
+              errors: [`Email ${employeeDto.email} is already registered`],
+            });
+            failureCount++;
+            continue;
+          }
+
+          // Create employee
+          await this.prisma.employee.create({
+            data: {
+              ippisNumber: employeeDto.ippisNumber,
+              firstName: employeeDto.firstName,
+              lastName: employeeDto.lastName,
+              email: employeeDto.email,
+              department: employeeDto.department,
+              createdBy: userId,
+            },
+          });
+
+          successCount++;
+        } catch (error: any) {
+          errors.push({
+            row: rowNumber,
+            ippisNumber: row['IPPIS Number'],
+            errors: [error.message || 'Unknown error occurred'],
+          });
+          failureCount++;
+        }
+      }
+
+      const processingTime = (Date.now() - startTime)/1000; // in seconds
+
+      // Log audit trail
+      if (userId) {
+        await this.auditService.log({
+          userId,
+          action: 'EMPLOYEES_BULK_UPLOAD',
+          resource: 'employee',
+          details: {
+            totalRecords,
+            successCount,
+            failureCount,
+            processingTime: processingTime + 's',
+            hasErrors: failureCount > 0,
+          },
+          status: failureCount === totalRecords ? 'failure' : 'success',
+        });
+      }
+
+      return {
+        totalRecords,
+        successCount,
+        failureCount,
+        errors,
+        processingTime,
+      };
+    } catch (error: any) {
+      // Log error
+      if (userId) {
+        await this.auditService.log({
+          userId,
+          action: 'EMPLOYEES_BULK_UPLOAD',
+          resource: 'employee',
+          details: { error: error.message },
+          status: 'failure',
+          errorMessage: error.message,
+        });
+      }
+
+      throw new BadRequestException(
+        `Failed to process Excel file: ${error.message}`,
+      );
     };
   }
 }
