@@ -30,6 +30,14 @@ export class UserService {
         ...createUserDto,
         password: hashedPassword,
         createdBy: creatorId,
+        permissions: [
+          'payslips:read',
+          'payslips:write',
+          'employees:read',
+          'employees:write',
+          'audit:read',
+        ],
+        role: 'user',
       },
       select: {
         id: true,
@@ -83,7 +91,7 @@ export class UserService {
     const [total, data] = await Promise.all([
       this.prisma.user.count({ where }),
       this.prisma.user.findMany({
-        where,
+        where: {...where, deletedAt: null},
         take,
         skip,
         orderBy: { createdAt: 'desc' },
@@ -117,7 +125,7 @@ export class UserService {
 
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { id , deletedAt: null },
       select: {
         id: true,
         uuid: true,

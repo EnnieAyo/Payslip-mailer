@@ -17,10 +17,27 @@ export interface AuditLogInput {
 export class AuditService {
   constructor(private prisma: PrismaService) {}
 
+  async findUserIdWhenUnknown(
+    details: Record<string, any>,
+  ): Promise<number | null> {
+    if (details.userId) {
+      return details.userId;
+    }
+
+    if (details.email) {
+      const user = await this.prisma.user.findUnique({
+        where: { email: details.email },
+        select: { id: true },
+      });
+      return user ? user.id : null;
+    }
+    return null;
+  }
+
   async log(input: AuditLogInput) {
     return this.prisma.auditLog.create({
       data: {
-        userId: input.userId,
+        userId: input.userId|| await this.findUserIdWhenUnknown(input.details || {}),
         action: input.action,
         resource: input.resource,
         resourceId: input.resourceId,

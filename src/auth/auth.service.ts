@@ -40,8 +40,14 @@ export class AuthService {
         password: hashedPassword,
         firstName,
         lastName,
+        permissions: [
+          'payslips:read',
+          'payslips:write',
+          'employees:read',
+          'employees:write',
+          'audit:read',
+        ],
         role: 'user',
-        permissions: [],
         emailVerified: false,
       },
     });
