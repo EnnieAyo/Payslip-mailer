@@ -29,6 +29,7 @@ export type AggregatePayslip = {
 export type PayslipAvgAggregateOutputType = {
   id: number | null
   employeeId: number | null
+  uploadId: number | null
   createdBy: number | null
   updatedBy: number | null
 }
@@ -36,6 +37,7 @@ export type PayslipAvgAggregateOutputType = {
 export type PayslipSumAggregateOutputType = {
   id: number | null
   employeeId: number | null
+  uploadId: number | null
   createdBy: number | null
   updatedBy: number | null
 }
@@ -48,8 +50,11 @@ export type PayslipMinAggregateOutputType = {
   filePath: string | null
   pdfContent: runtime.Bytes | null
   employeeId: number | null
+  uploadId: number | null
+  payMonth: string | null
   emailSent: boolean | null
   emailSentAt: Date | null
+  emailError: string | null
   createdAt: Date | null
   createdBy: number | null
   updatedAt: Date | null
@@ -65,8 +70,11 @@ export type PayslipMaxAggregateOutputType = {
   filePath: string | null
   pdfContent: runtime.Bytes | null
   employeeId: number | null
+  uploadId: number | null
+  payMonth: string | null
   emailSent: boolean | null
   emailSentAt: Date | null
+  emailError: string | null
   createdAt: Date | null
   createdBy: number | null
   updatedAt: Date | null
@@ -82,8 +90,11 @@ export type PayslipCountAggregateOutputType = {
   filePath: number
   pdfContent: number
   employeeId: number
+  uploadId: number
+  payMonth: number
   emailSent: number
   emailSentAt: number
+  emailError: number
   createdAt: number
   createdBy: number
   updatedAt: number
@@ -96,6 +107,7 @@ export type PayslipCountAggregateOutputType = {
 export type PayslipAvgAggregateInputType = {
   id?: true
   employeeId?: true
+  uploadId?: true
   createdBy?: true
   updatedBy?: true
 }
@@ -103,6 +115,7 @@ export type PayslipAvgAggregateInputType = {
 export type PayslipSumAggregateInputType = {
   id?: true
   employeeId?: true
+  uploadId?: true
   createdBy?: true
   updatedBy?: true
 }
@@ -115,8 +128,11 @@ export type PayslipMinAggregateInputType = {
   filePath?: true
   pdfContent?: true
   employeeId?: true
+  uploadId?: true
+  payMonth?: true
   emailSent?: true
   emailSentAt?: true
+  emailError?: true
   createdAt?: true
   createdBy?: true
   updatedAt?: true
@@ -132,8 +148,11 @@ export type PayslipMaxAggregateInputType = {
   filePath?: true
   pdfContent?: true
   employeeId?: true
+  uploadId?: true
+  payMonth?: true
   emailSent?: true
   emailSentAt?: true
+  emailError?: true
   createdAt?: true
   createdBy?: true
   updatedAt?: true
@@ -149,8 +168,11 @@ export type PayslipCountAggregateInputType = {
   filePath?: true
   pdfContent?: true
   employeeId?: true
+  uploadId?: true
+  payMonth?: true
   emailSent?: true
   emailSentAt?: true
+  emailError?: true
   createdAt?: true
   createdBy?: true
   updatedAt?: true
@@ -253,8 +275,11 @@ export type PayslipGroupByOutputType = {
   filePath: string
   pdfContent: runtime.Bytes
   employeeId: number
+  uploadId: number
+  payMonth: string
   emailSent: boolean
   emailSentAt: Date | null
+  emailError: string | null
   createdAt: Date
   createdBy: number | null
   updatedAt: Date
@@ -293,14 +318,18 @@ export type PayslipWhereInput = {
   filePath?: Prisma.StringFilter<"Payslip"> | string
   pdfContent?: Prisma.BytesFilter<"Payslip"> | runtime.Bytes
   employeeId?: Prisma.IntFilter<"Payslip"> | number
+  uploadId?: Prisma.IntFilter<"Payslip"> | number
+  payMonth?: Prisma.StringFilter<"Payslip"> | string
   emailSent?: Prisma.BoolFilter<"Payslip"> | boolean
   emailSentAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
+  emailError?: Prisma.StringNullableFilter<"Payslip"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   createdBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
+  upload?: Prisma.XOR<Prisma.PayslipUploadScalarRelationFilter, Prisma.PayslipUploadWhereInput>
 }
 
 export type PayslipOrderByWithRelationInput = {
@@ -311,14 +340,18 @@ export type PayslipOrderByWithRelationInput = {
   filePath?: Prisma.SortOrder
   pdfContent?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
+  uploadId?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   emailSent?: Prisma.SortOrder
   emailSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailError?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   employee?: Prisma.EmployeeOrderByWithRelationInput
+  upload?: Prisma.PayslipUploadOrderByWithRelationInput
 }
 
 export type PayslipWhereUniqueInput = Prisma.AtLeast<{
@@ -332,14 +365,18 @@ export type PayslipWhereUniqueInput = Prisma.AtLeast<{
   filePath?: Prisma.StringFilter<"Payslip"> | string
   pdfContent?: Prisma.BytesFilter<"Payslip"> | runtime.Bytes
   employeeId?: Prisma.IntFilter<"Payslip"> | number
+  uploadId?: Prisma.IntFilter<"Payslip"> | number
+  payMonth?: Prisma.StringFilter<"Payslip"> | string
   emailSent?: Prisma.BoolFilter<"Payslip"> | boolean
   emailSentAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
+  emailError?: Prisma.StringNullableFilter<"Payslip"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   createdBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
   employee?: Prisma.XOR<Prisma.EmployeeScalarRelationFilter, Prisma.EmployeeWhereInput>
+  upload?: Prisma.XOR<Prisma.PayslipUploadScalarRelationFilter, Prisma.PayslipUploadWhereInput>
 }, "id" | "uuid">
 
 export type PayslipOrderByWithAggregationInput = {
@@ -350,8 +387,11 @@ export type PayslipOrderByWithAggregationInput = {
   filePath?: Prisma.SortOrder
   pdfContent?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
+  uploadId?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   emailSent?: Prisma.SortOrder
   emailSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  emailError?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -375,8 +415,11 @@ export type PayslipScalarWhereWithAggregatesInput = {
   filePath?: Prisma.StringWithAggregatesFilter<"Payslip"> | string
   pdfContent?: Prisma.BytesWithAggregatesFilter<"Payslip"> | runtime.Bytes
   employeeId?: Prisma.IntWithAggregatesFilter<"Payslip"> | number
+  uploadId?: Prisma.IntWithAggregatesFilter<"Payslip"> | number
+  payMonth?: Prisma.StringWithAggregatesFilter<"Payslip"> | string
   emailSent?: Prisma.BoolWithAggregatesFilter<"Payslip"> | boolean
   emailSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Payslip"> | Date | string | null
+  emailError?: Prisma.StringNullableWithAggregatesFilter<"Payslip"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Payslip"> | Date | string
   createdBy?: Prisma.IntNullableWithAggregatesFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Payslip"> | Date | string
@@ -390,14 +433,17 @@ export type PayslipCreateInput = {
   fileName: string
   filePath: string
   pdfContent: runtime.Bytes
+  payMonth: string
   emailSent?: boolean
   emailSentAt?: Date | string | null
+  emailError?: string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
   deletedAt?: Date | string | null
   employee: Prisma.EmployeeCreateNestedOneWithoutPayslipsInput
+  upload: Prisma.PayslipUploadCreateNestedOneWithoutPayslipsInput
 }
 
 export type PayslipUncheckedCreateInput = {
@@ -408,8 +454,11 @@ export type PayslipUncheckedCreateInput = {
   filePath: string
   pdfContent: runtime.Bytes
   employeeId: number
+  uploadId: number
+  payMonth: string
   emailSent?: boolean
   emailSentAt?: Date | string | null
+  emailError?: string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
@@ -423,14 +472,17 @@ export type PayslipUpdateInput = {
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
   pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayslipsNestedInput
+  upload?: Prisma.PayslipUploadUpdateOneRequiredWithoutPayslipsNestedInput
 }
 
 export type PayslipUncheckedUpdateInput = {
@@ -441,8 +493,11 @@ export type PayslipUncheckedUpdateInput = {
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
   pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
   employeeId?: Prisma.IntFieldUpdateOperationsInput | number
+  uploadId?: Prisma.IntFieldUpdateOperationsInput | number
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -458,8 +513,11 @@ export type PayslipCreateManyInput = {
   filePath: string
   pdfContent: runtime.Bytes
   employeeId: number
+  uploadId: number
+  payMonth: string
   emailSent?: boolean
   emailSentAt?: Date | string | null
+  emailError?: string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
@@ -473,8 +531,10 @@ export type PayslipUpdateManyMutationInput = {
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
   pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -490,8 +550,11 @@ export type PayslipUncheckedUpdateManyInput = {
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
   pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
   employeeId?: Prisma.IntFieldUpdateOperationsInput | number
+  uploadId?: Prisma.IntFieldUpdateOperationsInput | number
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -517,8 +580,11 @@ export type PayslipCountOrderByAggregateInput = {
   filePath?: Prisma.SortOrder
   pdfContent?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
+  uploadId?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   emailSent?: Prisma.SortOrder
   emailSentAt?: Prisma.SortOrder
+  emailError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -529,6 +595,7 @@ export type PayslipCountOrderByAggregateInput = {
 export type PayslipAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
+  uploadId?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
 }
@@ -541,8 +608,11 @@ export type PayslipMaxOrderByAggregateInput = {
   filePath?: Prisma.SortOrder
   pdfContent?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
+  uploadId?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   emailSent?: Prisma.SortOrder
   emailSentAt?: Prisma.SortOrder
+  emailError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -558,8 +628,11 @@ export type PayslipMinOrderByAggregateInput = {
   filePath?: Prisma.SortOrder
   pdfContent?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
+  uploadId?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   emailSent?: Prisma.SortOrder
   emailSentAt?: Prisma.SortOrder
+  emailError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -570,6 +643,7 @@ export type PayslipMinOrderByAggregateInput = {
 export type PayslipSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
+  uploadId?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
 }
@@ -624,19 +698,64 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type PayslipCreateNestedManyWithoutUploadInput = {
+  create?: Prisma.XOR<Prisma.PayslipCreateWithoutUploadInput, Prisma.PayslipUncheckedCreateWithoutUploadInput> | Prisma.PayslipCreateWithoutUploadInput[] | Prisma.PayslipUncheckedCreateWithoutUploadInput[]
+  connectOrCreate?: Prisma.PayslipCreateOrConnectWithoutUploadInput | Prisma.PayslipCreateOrConnectWithoutUploadInput[]
+  createMany?: Prisma.PayslipCreateManyUploadInputEnvelope
+  connect?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+}
+
+export type PayslipUncheckedCreateNestedManyWithoutUploadInput = {
+  create?: Prisma.XOR<Prisma.PayslipCreateWithoutUploadInput, Prisma.PayslipUncheckedCreateWithoutUploadInput> | Prisma.PayslipCreateWithoutUploadInput[] | Prisma.PayslipUncheckedCreateWithoutUploadInput[]
+  connectOrCreate?: Prisma.PayslipCreateOrConnectWithoutUploadInput | Prisma.PayslipCreateOrConnectWithoutUploadInput[]
+  createMany?: Prisma.PayslipCreateManyUploadInputEnvelope
+  connect?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+}
+
+export type PayslipUpdateManyWithoutUploadNestedInput = {
+  create?: Prisma.XOR<Prisma.PayslipCreateWithoutUploadInput, Prisma.PayslipUncheckedCreateWithoutUploadInput> | Prisma.PayslipCreateWithoutUploadInput[] | Prisma.PayslipUncheckedCreateWithoutUploadInput[]
+  connectOrCreate?: Prisma.PayslipCreateOrConnectWithoutUploadInput | Prisma.PayslipCreateOrConnectWithoutUploadInput[]
+  upsert?: Prisma.PayslipUpsertWithWhereUniqueWithoutUploadInput | Prisma.PayslipUpsertWithWhereUniqueWithoutUploadInput[]
+  createMany?: Prisma.PayslipCreateManyUploadInputEnvelope
+  set?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  disconnect?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  delete?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  connect?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  update?: Prisma.PayslipUpdateWithWhereUniqueWithoutUploadInput | Prisma.PayslipUpdateWithWhereUniqueWithoutUploadInput[]
+  updateMany?: Prisma.PayslipUpdateManyWithWhereWithoutUploadInput | Prisma.PayslipUpdateManyWithWhereWithoutUploadInput[]
+  deleteMany?: Prisma.PayslipScalarWhereInput | Prisma.PayslipScalarWhereInput[]
+}
+
+export type PayslipUncheckedUpdateManyWithoutUploadNestedInput = {
+  create?: Prisma.XOR<Prisma.PayslipCreateWithoutUploadInput, Prisma.PayslipUncheckedCreateWithoutUploadInput> | Prisma.PayslipCreateWithoutUploadInput[] | Prisma.PayslipUncheckedCreateWithoutUploadInput[]
+  connectOrCreate?: Prisma.PayslipCreateOrConnectWithoutUploadInput | Prisma.PayslipCreateOrConnectWithoutUploadInput[]
+  upsert?: Prisma.PayslipUpsertWithWhereUniqueWithoutUploadInput | Prisma.PayslipUpsertWithWhereUniqueWithoutUploadInput[]
+  createMany?: Prisma.PayslipCreateManyUploadInputEnvelope
+  set?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  disconnect?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  delete?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  connect?: Prisma.PayslipWhereUniqueInput | Prisma.PayslipWhereUniqueInput[]
+  update?: Prisma.PayslipUpdateWithWhereUniqueWithoutUploadInput | Prisma.PayslipUpdateWithWhereUniqueWithoutUploadInput[]
+  updateMany?: Prisma.PayslipUpdateManyWithWhereWithoutUploadInput | Prisma.PayslipUpdateManyWithWhereWithoutUploadInput[]
+  deleteMany?: Prisma.PayslipScalarWhereInput | Prisma.PayslipScalarWhereInput[]
+}
+
 export type PayslipCreateWithoutEmployeeInput = {
   uuid?: string
   ippisNumber: string
   fileName: string
   filePath: string
   pdfContent: runtime.Bytes
+  payMonth: string
   emailSent?: boolean
   emailSentAt?: Date | string | null
+  emailError?: string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
   deletedAt?: Date | string | null
+  upload: Prisma.PayslipUploadCreateNestedOneWithoutPayslipsInput
 }
 
 export type PayslipUncheckedCreateWithoutEmployeeInput = {
@@ -646,8 +765,11 @@ export type PayslipUncheckedCreateWithoutEmployeeInput = {
   fileName: string
   filePath: string
   pdfContent: runtime.Bytes
+  uploadId: number
+  payMonth: string
   emailSent?: boolean
   emailSentAt?: Date | string | null
+  emailError?: string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
@@ -692,13 +814,79 @@ export type PayslipScalarWhereInput = {
   filePath?: Prisma.StringFilter<"Payslip"> | string
   pdfContent?: Prisma.BytesFilter<"Payslip"> | runtime.Bytes
   employeeId?: Prisma.IntFilter<"Payslip"> | number
+  uploadId?: Prisma.IntFilter<"Payslip"> | number
+  payMonth?: Prisma.StringFilter<"Payslip"> | string
   emailSent?: Prisma.BoolFilter<"Payslip"> | boolean
   emailSentAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
+  emailError?: Prisma.StringNullableFilter<"Payslip"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   createdBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"Payslip"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"Payslip"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Payslip"> | Date | string | null
+}
+
+export type PayslipCreateWithoutUploadInput = {
+  uuid?: string
+  ippisNumber: string
+  fileName: string
+  filePath: string
+  pdfContent: runtime.Bytes
+  payMonth: string
+  emailSent?: boolean
+  emailSentAt?: Date | string | null
+  emailError?: string | null
+  createdAt?: Date | string
+  createdBy?: number | null
+  updatedAt?: Date | string
+  updatedBy?: number | null
+  deletedAt?: Date | string | null
+  employee: Prisma.EmployeeCreateNestedOneWithoutPayslipsInput
+}
+
+export type PayslipUncheckedCreateWithoutUploadInput = {
+  id?: number
+  uuid?: string
+  ippisNumber: string
+  fileName: string
+  filePath: string
+  pdfContent: runtime.Bytes
+  employeeId: number
+  payMonth: string
+  emailSent?: boolean
+  emailSentAt?: Date | string | null
+  emailError?: string | null
+  createdAt?: Date | string
+  createdBy?: number | null
+  updatedAt?: Date | string
+  updatedBy?: number | null
+  deletedAt?: Date | string | null
+}
+
+export type PayslipCreateOrConnectWithoutUploadInput = {
+  where: Prisma.PayslipWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayslipCreateWithoutUploadInput, Prisma.PayslipUncheckedCreateWithoutUploadInput>
+}
+
+export type PayslipCreateManyUploadInputEnvelope = {
+  data: Prisma.PayslipCreateManyUploadInput | Prisma.PayslipCreateManyUploadInput[]
+  skipDuplicates?: boolean
+}
+
+export type PayslipUpsertWithWhereUniqueWithoutUploadInput = {
+  where: Prisma.PayslipWhereUniqueInput
+  update: Prisma.XOR<Prisma.PayslipUpdateWithoutUploadInput, Prisma.PayslipUncheckedUpdateWithoutUploadInput>
+  create: Prisma.XOR<Prisma.PayslipCreateWithoutUploadInput, Prisma.PayslipUncheckedCreateWithoutUploadInput>
+}
+
+export type PayslipUpdateWithWhereUniqueWithoutUploadInput = {
+  where: Prisma.PayslipWhereUniqueInput
+  data: Prisma.XOR<Prisma.PayslipUpdateWithoutUploadInput, Prisma.PayslipUncheckedUpdateWithoutUploadInput>
+}
+
+export type PayslipUpdateManyWithWhereWithoutUploadInput = {
+  where: Prisma.PayslipScalarWhereInput
+  data: Prisma.XOR<Prisma.PayslipUpdateManyMutationInput, Prisma.PayslipUncheckedUpdateManyWithoutUploadInput>
 }
 
 export type PayslipCreateManyEmployeeInput = {
@@ -708,8 +896,11 @@ export type PayslipCreateManyEmployeeInput = {
   fileName: string
   filePath: string
   pdfContent: runtime.Bytes
+  uploadId: number
+  payMonth: string
   emailSent?: boolean
   emailSentAt?: Date | string | null
+  emailError?: string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
@@ -723,13 +914,16 @@ export type PayslipUpdateWithoutEmployeeInput = {
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
   pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  upload?: Prisma.PayslipUploadUpdateOneRequiredWithoutPayslipsNestedInput
 }
 
 export type PayslipUncheckedUpdateWithoutEmployeeInput = {
@@ -739,8 +933,11 @@ export type PayslipUncheckedUpdateWithoutEmployeeInput = {
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
   pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  uploadId?: Prisma.IntFieldUpdateOperationsInput | number
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -755,8 +952,86 @@ export type PayslipUncheckedUpdateManyWithoutEmployeeInput = {
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
   pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  uploadId?: Prisma.IntFieldUpdateOperationsInput | number
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type PayslipCreateManyUploadInput = {
+  id?: number
+  uuid?: string
+  ippisNumber: string
+  fileName: string
+  filePath: string
+  pdfContent: runtime.Bytes
+  employeeId: number
+  payMonth: string
+  emailSent?: boolean
+  emailSentAt?: Date | string | null
+  emailError?: string | null
+  createdAt?: Date | string
+  createdBy?: number | null
+  updatedAt?: Date | string
+  updatedBy?: number | null
+  deletedAt?: Date | string | null
+}
+
+export type PayslipUpdateWithoutUploadInput = {
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  ippisNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutPayslipsNestedInput
+}
+
+export type PayslipUncheckedUpdateWithoutUploadInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  ippisNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  employeeId?: Prisma.IntFieldUpdateOperationsInput | number
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type PayslipUncheckedUpdateManyWithoutUploadInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  ippisNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  pdfContent?: Prisma.BytesFieldUpdateOperationsInput | runtime.Bytes
+  employeeId?: Prisma.IntFieldUpdateOperationsInput | number
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  emailSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -774,14 +1049,18 @@ export type PayslipSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   filePath?: boolean
   pdfContent?: boolean
   employeeId?: boolean
+  uploadId?: boolean
+  payMonth?: boolean
   emailSent?: boolean
   emailSentAt?: boolean
+  emailError?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
   deletedAt?: boolean
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  upload?: boolean | Prisma.PayslipUploadDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payslip"]>
 
 export type PayslipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -792,14 +1071,18 @@ export type PayslipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   filePath?: boolean
   pdfContent?: boolean
   employeeId?: boolean
+  uploadId?: boolean
+  payMonth?: boolean
   emailSent?: boolean
   emailSentAt?: boolean
+  emailError?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
   deletedAt?: boolean
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  upload?: boolean | Prisma.PayslipUploadDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payslip"]>
 
 export type PayslipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -810,14 +1093,18 @@ export type PayslipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   filePath?: boolean
   pdfContent?: boolean
   employeeId?: boolean
+  uploadId?: boolean
+  payMonth?: boolean
   emailSent?: boolean
   emailSentAt?: boolean
+  emailError?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
   deletedAt?: boolean
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  upload?: boolean | Prisma.PayslipUploadDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payslip"]>
 
 export type PayslipSelectScalar = {
@@ -828,8 +1115,11 @@ export type PayslipSelectScalar = {
   filePath?: boolean
   pdfContent?: boolean
   employeeId?: boolean
+  uploadId?: boolean
+  payMonth?: boolean
   emailSent?: boolean
   emailSentAt?: boolean
+  emailError?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
@@ -837,21 +1127,25 @@ export type PayslipSelectScalar = {
   deletedAt?: boolean
 }
 
-export type PayslipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "ippisNumber" | "fileName" | "filePath" | "pdfContent" | "employeeId" | "emailSent" | "emailSentAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy" | "deletedAt", ExtArgs["result"]["payslip"]>
+export type PayslipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "ippisNumber" | "fileName" | "filePath" | "pdfContent" | "employeeId" | "uploadId" | "payMonth" | "emailSent" | "emailSentAt" | "emailError" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy" | "deletedAt", ExtArgs["result"]["payslip"]>
 export type PayslipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  upload?: boolean | Prisma.PayslipUploadDefaultArgs<ExtArgs>
 }
 export type PayslipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  upload?: boolean | Prisma.PayslipUploadDefaultArgs<ExtArgs>
 }
 export type PayslipIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   employee?: boolean | Prisma.EmployeeDefaultArgs<ExtArgs>
+  upload?: boolean | Prisma.PayslipUploadDefaultArgs<ExtArgs>
 }
 
 export type $PayslipPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Payslip"
   objects: {
     employee: Prisma.$EmployeePayload<ExtArgs>
+    upload: Prisma.$PayslipUploadPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -861,8 +1155,11 @@ export type $PayslipPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     filePath: string
     pdfContent: runtime.Bytes
     employeeId: number
+    uploadId: number
+    payMonth: string
     emailSent: boolean
     emailSentAt: Date | null
+    emailError: string | null
     createdAt: Date
     createdBy: number | null
     updatedAt: Date
@@ -1263,6 +1560,7 @@ readonly fields: PayslipFieldRefs;
 export interface Prisma__PayslipClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   employee<T extends Prisma.EmployeeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmployeeDefaultArgs<ExtArgs>>): Prisma.Prisma__EmployeeClient<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  upload<T extends Prisma.PayslipUploadDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayslipUploadDefaultArgs<ExtArgs>>): Prisma.Prisma__PayslipUploadClient<runtime.Types.Result.GetResult<Prisma.$PayslipUploadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1299,8 +1597,11 @@ export interface PayslipFieldRefs {
   readonly filePath: Prisma.FieldRef<"Payslip", 'String'>
   readonly pdfContent: Prisma.FieldRef<"Payslip", 'Bytes'>
   readonly employeeId: Prisma.FieldRef<"Payslip", 'Int'>
+  readonly uploadId: Prisma.FieldRef<"Payslip", 'Int'>
+  readonly payMonth: Prisma.FieldRef<"Payslip", 'String'>
   readonly emailSent: Prisma.FieldRef<"Payslip", 'Boolean'>
   readonly emailSentAt: Prisma.FieldRef<"Payslip", 'DateTime'>
+  readonly emailError: Prisma.FieldRef<"Payslip", 'String'>
   readonly createdAt: Prisma.FieldRef<"Payslip", 'DateTime'>
   readonly createdBy: Prisma.FieldRef<"Payslip", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"Payslip", 'DateTime'>

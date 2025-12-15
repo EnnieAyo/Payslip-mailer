@@ -29,6 +29,7 @@ export type AggregatePayslipUpload = {
 export type PayslipUploadAvgAggregateOutputType = {
   id: number | null
   totalFiles: number | null
+  processedFiles: number | null
   successCount: number | null
   failureCount: number | null
   createdBy: number | null
@@ -38,6 +39,7 @@ export type PayslipUploadAvgAggregateOutputType = {
 export type PayslipUploadSumAggregateOutputType = {
   id: number | null
   totalFiles: number | null
+  processedFiles: number | null
   successCount: number | null
   failureCount: number | null
   createdBy: number | null
@@ -49,10 +51,15 @@ export type PayslipUploadMinAggregateOutputType = {
   uuid: string | null
   fileName: string | null
   filePath: string | null
+  payMonth: string | null
   totalFiles: number | null
+  processedFiles: number | null
   successCount: number | null
   failureCount: number | null
   status: string | null
+  emailStatus: string | null
+  sentAt: Date | null
+  completedAt: Date | null
   createdAt: Date | null
   createdBy: number | null
   updatedAt: Date | null
@@ -65,10 +72,15 @@ export type PayslipUploadMaxAggregateOutputType = {
   uuid: string | null
   fileName: string | null
   filePath: string | null
+  payMonth: string | null
   totalFiles: number | null
+  processedFiles: number | null
   successCount: number | null
   failureCount: number | null
   status: string | null
+  emailStatus: string | null
+  sentAt: Date | null
+  completedAt: Date | null
   createdAt: Date | null
   createdBy: number | null
   updatedAt: Date | null
@@ -81,10 +93,15 @@ export type PayslipUploadCountAggregateOutputType = {
   uuid: number
   fileName: number
   filePath: number
+  payMonth: number
   totalFiles: number
+  processedFiles: number
   successCount: number
   failureCount: number
   status: number
+  emailStatus: number
+  sentAt: number
+  completedAt: number
   createdAt: number
   createdBy: number
   updatedAt: number
@@ -97,6 +114,7 @@ export type PayslipUploadCountAggregateOutputType = {
 export type PayslipUploadAvgAggregateInputType = {
   id?: true
   totalFiles?: true
+  processedFiles?: true
   successCount?: true
   failureCount?: true
   createdBy?: true
@@ -106,6 +124,7 @@ export type PayslipUploadAvgAggregateInputType = {
 export type PayslipUploadSumAggregateInputType = {
   id?: true
   totalFiles?: true
+  processedFiles?: true
   successCount?: true
   failureCount?: true
   createdBy?: true
@@ -117,10 +136,15 @@ export type PayslipUploadMinAggregateInputType = {
   uuid?: true
   fileName?: true
   filePath?: true
+  payMonth?: true
   totalFiles?: true
+  processedFiles?: true
   successCount?: true
   failureCount?: true
   status?: true
+  emailStatus?: true
+  sentAt?: true
+  completedAt?: true
   createdAt?: true
   createdBy?: true
   updatedAt?: true
@@ -133,10 +157,15 @@ export type PayslipUploadMaxAggregateInputType = {
   uuid?: true
   fileName?: true
   filePath?: true
+  payMonth?: true
   totalFiles?: true
+  processedFiles?: true
   successCount?: true
   failureCount?: true
   status?: true
+  emailStatus?: true
+  sentAt?: true
+  completedAt?: true
   createdAt?: true
   createdBy?: true
   updatedAt?: true
@@ -149,10 +178,15 @@ export type PayslipUploadCountAggregateInputType = {
   uuid?: true
   fileName?: true
   filePath?: true
+  payMonth?: true
   totalFiles?: true
+  processedFiles?: true
   successCount?: true
   failureCount?: true
   status?: true
+  emailStatus?: true
+  sentAt?: true
+  completedAt?: true
   createdAt?: true
   createdBy?: true
   updatedAt?: true
@@ -252,10 +286,15 @@ export type PayslipUploadGroupByOutputType = {
   uuid: string
   fileName: string
   filePath: string
+  payMonth: string
   totalFiles: number
+  processedFiles: number
   successCount: number
   failureCount: number
   status: string
+  emailStatus: string
+  sentAt: Date | null
+  completedAt: Date | null
   createdAt: Date
   createdBy: number | null
   updatedAt: Date
@@ -291,15 +330,21 @@ export type PayslipUploadWhereInput = {
   uuid?: Prisma.StringFilter<"PayslipUpload"> | string
   fileName?: Prisma.StringFilter<"PayslipUpload"> | string
   filePath?: Prisma.StringFilter<"PayslipUpload"> | string
+  payMonth?: Prisma.StringFilter<"PayslipUpload"> | string
   totalFiles?: Prisma.IntFilter<"PayslipUpload"> | number
+  processedFiles?: Prisma.IntFilter<"PayslipUpload"> | number
   successCount?: Prisma.IntFilter<"PayslipUpload"> | number
   failureCount?: Prisma.IntFilter<"PayslipUpload"> | number
   status?: Prisma.StringFilter<"PayslipUpload"> | string
+  emailStatus?: Prisma.StringFilter<"PayslipUpload"> | string
+  sentAt?: Prisma.DateTimeNullableFilter<"PayslipUpload"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"PayslipUpload"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PayslipUpload"> | Date | string
   createdBy?: Prisma.IntNullableFilter<"PayslipUpload"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"PayslipUpload"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"PayslipUpload"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"PayslipUpload"> | Date | string | null
+  payslips?: Prisma.PayslipListRelationFilter
 }
 
 export type PayslipUploadOrderByWithRelationInput = {
@@ -307,15 +352,21 @@ export type PayslipUploadOrderByWithRelationInput = {
   uuid?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   filePath?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   totalFiles?: Prisma.SortOrder
+  processedFiles?: Prisma.SortOrder
   successCount?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  emailStatus?: Prisma.SortOrder
+  sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  payslips?: Prisma.PayslipOrderByRelationAggregateInput
 }
 
 export type PayslipUploadWhereUniqueInput = Prisma.AtLeast<{
@@ -326,15 +377,21 @@ export type PayslipUploadWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PayslipUploadWhereInput | Prisma.PayslipUploadWhereInput[]
   fileName?: Prisma.StringFilter<"PayslipUpload"> | string
   filePath?: Prisma.StringFilter<"PayslipUpload"> | string
+  payMonth?: Prisma.StringFilter<"PayslipUpload"> | string
   totalFiles?: Prisma.IntFilter<"PayslipUpload"> | number
+  processedFiles?: Prisma.IntFilter<"PayslipUpload"> | number
   successCount?: Prisma.IntFilter<"PayslipUpload"> | number
   failureCount?: Prisma.IntFilter<"PayslipUpload"> | number
   status?: Prisma.StringFilter<"PayslipUpload"> | string
+  emailStatus?: Prisma.StringFilter<"PayslipUpload"> | string
+  sentAt?: Prisma.DateTimeNullableFilter<"PayslipUpload"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"PayslipUpload"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PayslipUpload"> | Date | string
   createdBy?: Prisma.IntNullableFilter<"PayslipUpload"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"PayslipUpload"> | Date | string
   updatedBy?: Prisma.IntNullableFilter<"PayslipUpload"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"PayslipUpload"> | Date | string | null
+  payslips?: Prisma.PayslipListRelationFilter
 }, "id" | "uuid">
 
 export type PayslipUploadOrderByWithAggregationInput = {
@@ -342,10 +399,15 @@ export type PayslipUploadOrderByWithAggregationInput = {
   uuid?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   filePath?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   totalFiles?: Prisma.SortOrder
+  processedFiles?: Prisma.SortOrder
   successCount?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  emailStatus?: Prisma.SortOrder
+  sentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -366,10 +428,15 @@ export type PayslipUploadScalarWhereWithAggregatesInput = {
   uuid?: Prisma.StringWithAggregatesFilter<"PayslipUpload"> | string
   fileName?: Prisma.StringWithAggregatesFilter<"PayslipUpload"> | string
   filePath?: Prisma.StringWithAggregatesFilter<"PayslipUpload"> | string
+  payMonth?: Prisma.StringWithAggregatesFilter<"PayslipUpload"> | string
   totalFiles?: Prisma.IntWithAggregatesFilter<"PayslipUpload"> | number
+  processedFiles?: Prisma.IntWithAggregatesFilter<"PayslipUpload"> | number
   successCount?: Prisma.IntWithAggregatesFilter<"PayslipUpload"> | number
   failureCount?: Prisma.IntWithAggregatesFilter<"PayslipUpload"> | number
   status?: Prisma.StringWithAggregatesFilter<"PayslipUpload"> | string
+  emailStatus?: Prisma.StringWithAggregatesFilter<"PayslipUpload"> | string
+  sentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PayslipUpload"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PayslipUpload"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PayslipUpload"> | Date | string
   createdBy?: Prisma.IntNullableWithAggregatesFilter<"PayslipUpload"> | number | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PayslipUpload"> | Date | string
@@ -381,15 +448,21 @@ export type PayslipUploadCreateInput = {
   uuid?: string
   fileName: string
   filePath: string
+  payMonth: string
   totalFiles: number
+  processedFiles?: number
   successCount?: number
   failureCount?: number
   status?: string
+  emailStatus?: string
+  sentAt?: Date | string | null
+  completedAt?: Date | string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
   deletedAt?: Date | string | null
+  payslips?: Prisma.PayslipCreateNestedManyWithoutUploadInput
 }
 
 export type PayslipUploadUncheckedCreateInput = {
@@ -397,30 +470,42 @@ export type PayslipUploadUncheckedCreateInput = {
   uuid?: string
   fileName: string
   filePath: string
+  payMonth: string
   totalFiles: number
+  processedFiles?: number
   successCount?: number
   failureCount?: number
   status?: string
+  emailStatus?: string
+  sentAt?: Date | string | null
+  completedAt?: Date | string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
   updatedBy?: number | null
   deletedAt?: Date | string | null
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutUploadInput
 }
 
 export type PayslipUploadUpdateInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   totalFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  processedFiles?: Prisma.IntFieldUpdateOperationsInput | number
   successCount?: Prisma.IntFieldUpdateOperationsInput | number
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payslips?: Prisma.PayslipUpdateManyWithoutUploadNestedInput
 }
 
 export type PayslipUploadUncheckedUpdateInput = {
@@ -428,15 +513,21 @@ export type PayslipUploadUncheckedUpdateInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   totalFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  processedFiles?: Prisma.IntFieldUpdateOperationsInput | number
   successCount?: Prisma.IntFieldUpdateOperationsInput | number
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutUploadNestedInput
 }
 
 export type PayslipUploadCreateManyInput = {
@@ -444,10 +535,15 @@ export type PayslipUploadCreateManyInput = {
   uuid?: string
   fileName: string
   filePath: string
+  payMonth: string
   totalFiles: number
+  processedFiles?: number
   successCount?: number
   failureCount?: number
   status?: string
+  emailStatus?: string
+  sentAt?: Date | string | null
+  completedAt?: Date | string | null
   createdAt?: Date | string
   createdBy?: number | null
   updatedAt?: Date | string
@@ -459,10 +555,15 @@ export type PayslipUploadUpdateManyMutationInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   totalFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  processedFiles?: Prisma.IntFieldUpdateOperationsInput | number
   successCount?: Prisma.IntFieldUpdateOperationsInput | number
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -475,10 +576,15 @@ export type PayslipUploadUncheckedUpdateManyInput = {
   uuid?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
   totalFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  processedFiles?: Prisma.IntFieldUpdateOperationsInput | number
   successCount?: Prisma.IntFieldUpdateOperationsInput | number
   failureCount?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -486,15 +592,25 @@ export type PayslipUploadUncheckedUpdateManyInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+export type PayslipUploadScalarRelationFilter = {
+  is?: Prisma.PayslipUploadWhereInput
+  isNot?: Prisma.PayslipUploadWhereInput
+}
+
 export type PayslipUploadCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   uuid?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   filePath?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   totalFiles?: Prisma.SortOrder
+  processedFiles?: Prisma.SortOrder
   successCount?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  emailStatus?: Prisma.SortOrder
+  sentAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -505,6 +621,7 @@ export type PayslipUploadCountOrderByAggregateInput = {
 export type PayslipUploadAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   totalFiles?: Prisma.SortOrder
+  processedFiles?: Prisma.SortOrder
   successCount?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
@@ -516,10 +633,15 @@ export type PayslipUploadMaxOrderByAggregateInput = {
   uuid?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   filePath?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   totalFiles?: Prisma.SortOrder
+  processedFiles?: Prisma.SortOrder
   successCount?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  emailStatus?: Prisma.SortOrder
+  sentAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -532,10 +654,15 @@ export type PayslipUploadMinOrderByAggregateInput = {
   uuid?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   filePath?: Prisma.SortOrder
+  payMonth?: Prisma.SortOrder
   totalFiles?: Prisma.SortOrder
+  processedFiles?: Prisma.SortOrder
   successCount?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  emailStatus?: Prisma.SortOrder
+  sentAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -546,12 +673,154 @@ export type PayslipUploadMinOrderByAggregateInput = {
 export type PayslipUploadSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   totalFiles?: Prisma.SortOrder
+  processedFiles?: Prisma.SortOrder
   successCount?: Prisma.SortOrder
   failureCount?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
 }
 
+export type PayslipUploadCreateNestedOneWithoutPayslipsInput = {
+  create?: Prisma.XOR<Prisma.PayslipUploadCreateWithoutPayslipsInput, Prisma.PayslipUploadUncheckedCreateWithoutPayslipsInput>
+  connectOrCreate?: Prisma.PayslipUploadCreateOrConnectWithoutPayslipsInput
+  connect?: Prisma.PayslipUploadWhereUniqueInput
+}
+
+export type PayslipUploadUpdateOneRequiredWithoutPayslipsNestedInput = {
+  create?: Prisma.XOR<Prisma.PayslipUploadCreateWithoutPayslipsInput, Prisma.PayslipUploadUncheckedCreateWithoutPayslipsInput>
+  connectOrCreate?: Prisma.PayslipUploadCreateOrConnectWithoutPayslipsInput
+  upsert?: Prisma.PayslipUploadUpsertWithoutPayslipsInput
+  connect?: Prisma.PayslipUploadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PayslipUploadUpdateToOneWithWhereWithoutPayslipsInput, Prisma.PayslipUploadUpdateWithoutPayslipsInput>, Prisma.PayslipUploadUncheckedUpdateWithoutPayslipsInput>
+}
+
+export type PayslipUploadCreateWithoutPayslipsInput = {
+  uuid?: string
+  fileName: string
+  filePath: string
+  payMonth: string
+  totalFiles: number
+  processedFiles?: number
+  successCount?: number
+  failureCount?: number
+  status?: string
+  emailStatus?: string
+  sentAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  createdBy?: number | null
+  updatedAt?: Date | string
+  updatedBy?: number | null
+  deletedAt?: Date | string | null
+}
+
+export type PayslipUploadUncheckedCreateWithoutPayslipsInput = {
+  id?: number
+  uuid?: string
+  fileName: string
+  filePath: string
+  payMonth: string
+  totalFiles: number
+  processedFiles?: number
+  successCount?: number
+  failureCount?: number
+  status?: string
+  emailStatus?: string
+  sentAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  createdBy?: number | null
+  updatedAt?: Date | string
+  updatedBy?: number | null
+  deletedAt?: Date | string | null
+}
+
+export type PayslipUploadCreateOrConnectWithoutPayslipsInput = {
+  where: Prisma.PayslipUploadWhereUniqueInput
+  create: Prisma.XOR<Prisma.PayslipUploadCreateWithoutPayslipsInput, Prisma.PayslipUploadUncheckedCreateWithoutPayslipsInput>
+}
+
+export type PayslipUploadUpsertWithoutPayslipsInput = {
+  update: Prisma.XOR<Prisma.PayslipUploadUpdateWithoutPayslipsInput, Prisma.PayslipUploadUncheckedUpdateWithoutPayslipsInput>
+  create: Prisma.XOR<Prisma.PayslipUploadCreateWithoutPayslipsInput, Prisma.PayslipUploadUncheckedCreateWithoutPayslipsInput>
+  where?: Prisma.PayslipUploadWhereInput
+}
+
+export type PayslipUploadUpdateToOneWithWhereWithoutPayslipsInput = {
+  where?: Prisma.PayslipUploadWhereInput
+  data: Prisma.XOR<Prisma.PayslipUploadUpdateWithoutPayslipsInput, Prisma.PayslipUploadUncheckedUpdateWithoutPayslipsInput>
+}
+
+export type PayslipUploadUpdateWithoutPayslipsInput = {
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
+  totalFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  processedFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  successCount?: Prisma.IntFieldUpdateOperationsInput | number
+  failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type PayslipUploadUncheckedUpdateWithoutPayslipsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  uuid?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  payMonth?: Prisma.StringFieldUpdateOperationsInput | string
+  totalFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  processedFiles?: Prisma.IntFieldUpdateOperationsInput | number
+  successCount?: Prisma.IntFieldUpdateOperationsInput | number
+  failureCount?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  emailStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+
+/**
+ * Count Type PayslipUploadCountOutputType
+ */
+
+export type PayslipUploadCountOutputType = {
+  payslips: number
+}
+
+export type PayslipUploadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  payslips?: boolean | PayslipUploadCountOutputTypeCountPayslipsArgs
+}
+
+/**
+ * PayslipUploadCountOutputType without action
+ */
+export type PayslipUploadCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayslipUploadCountOutputType
+   */
+  select?: Prisma.PayslipUploadCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PayslipUploadCountOutputType without action
+ */
+export type PayslipUploadCountOutputTypeCountPayslipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayslipWhereInput
+}
 
 
 export type PayslipUploadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -559,15 +828,22 @@ export type PayslipUploadSelect<ExtArgs extends runtime.Types.Extensions.Interna
   uuid?: boolean
   fileName?: boolean
   filePath?: boolean
+  payMonth?: boolean
   totalFiles?: boolean
+  processedFiles?: boolean
   successCount?: boolean
   failureCount?: boolean
   status?: boolean
+  emailStatus?: boolean
+  sentAt?: boolean
+  completedAt?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
   updatedBy?: boolean
   deletedAt?: boolean
+  payslips?: boolean | Prisma.PayslipUpload$payslipsArgs<ExtArgs>
+  _count?: boolean | Prisma.PayslipUploadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payslipUpload"]>
 
 export type PayslipUploadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -575,10 +851,15 @@ export type PayslipUploadSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   uuid?: boolean
   fileName?: boolean
   filePath?: boolean
+  payMonth?: boolean
   totalFiles?: boolean
+  processedFiles?: boolean
   successCount?: boolean
   failureCount?: boolean
   status?: boolean
+  emailStatus?: boolean
+  sentAt?: boolean
+  completedAt?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
@@ -591,10 +872,15 @@ export type PayslipUploadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   uuid?: boolean
   fileName?: boolean
   filePath?: boolean
+  payMonth?: boolean
   totalFiles?: boolean
+  processedFiles?: boolean
   successCount?: boolean
   failureCount?: boolean
   status?: boolean
+  emailStatus?: boolean
+  sentAt?: boolean
+  completedAt?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
@@ -607,10 +893,15 @@ export type PayslipUploadSelectScalar = {
   uuid?: boolean
   fileName?: boolean
   filePath?: boolean
+  payMonth?: boolean
   totalFiles?: boolean
+  processedFiles?: boolean
   successCount?: boolean
   failureCount?: boolean
   status?: boolean
+  emailStatus?: boolean
+  sentAt?: boolean
+  completedAt?: boolean
   createdAt?: boolean
   createdBy?: boolean
   updatedAt?: boolean
@@ -618,20 +909,33 @@ export type PayslipUploadSelectScalar = {
   deletedAt?: boolean
 }
 
-export type PayslipUploadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "fileName" | "filePath" | "totalFiles" | "successCount" | "failureCount" | "status" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy" | "deletedAt", ExtArgs["result"]["payslipUpload"]>
+export type PayslipUploadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "uuid" | "fileName" | "filePath" | "payMonth" | "totalFiles" | "processedFiles" | "successCount" | "failureCount" | "status" | "emailStatus" | "sentAt" | "completedAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy" | "deletedAt", ExtArgs["result"]["payslipUpload"]>
+export type PayslipUploadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  payslips?: boolean | Prisma.PayslipUpload$payslipsArgs<ExtArgs>
+  _count?: boolean | Prisma.PayslipUploadCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type PayslipUploadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type PayslipUploadIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $PayslipUploadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PayslipUpload"
-  objects: {}
+  objects: {
+    payslips: Prisma.$PayslipPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     uuid: string
     fileName: string
     filePath: string
+    payMonth: string
     totalFiles: number
+    processedFiles: number
     successCount: number
     failureCount: number
     status: string
+    emailStatus: string
+    sentAt: Date | null
+    completedAt: Date | null
     createdAt: Date
     createdBy: number | null
     updatedAt: Date
@@ -1031,6 +1335,7 @@ readonly fields: PayslipUploadFieldRefs;
  */
 export interface Prisma__PayslipUploadClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  payslips<T extends Prisma.PayslipUpload$payslipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayslipUpload$payslipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayslipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1064,10 +1369,15 @@ export interface PayslipUploadFieldRefs {
   readonly uuid: Prisma.FieldRef<"PayslipUpload", 'String'>
   readonly fileName: Prisma.FieldRef<"PayslipUpload", 'String'>
   readonly filePath: Prisma.FieldRef<"PayslipUpload", 'String'>
+  readonly payMonth: Prisma.FieldRef<"PayslipUpload", 'String'>
   readonly totalFiles: Prisma.FieldRef<"PayslipUpload", 'Int'>
+  readonly processedFiles: Prisma.FieldRef<"PayslipUpload", 'Int'>
   readonly successCount: Prisma.FieldRef<"PayslipUpload", 'Int'>
   readonly failureCount: Prisma.FieldRef<"PayslipUpload", 'Int'>
   readonly status: Prisma.FieldRef<"PayslipUpload", 'String'>
+  readonly emailStatus: Prisma.FieldRef<"PayslipUpload", 'String'>
+  readonly sentAt: Prisma.FieldRef<"PayslipUpload", 'DateTime'>
+  readonly completedAt: Prisma.FieldRef<"PayslipUpload", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"PayslipUpload", 'DateTime'>
   readonly createdBy: Prisma.FieldRef<"PayslipUpload", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"PayslipUpload", 'DateTime'>
@@ -1090,6 +1400,10 @@ export type PayslipUploadFindUniqueArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
+  /**
    * Filter, which PayslipUpload to fetch.
    */
   where: Prisma.PayslipUploadWhereUniqueInput
@@ -1108,6 +1422,10 @@ export type PayslipUploadFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
+  /**
    * Filter, which PayslipUpload to fetch.
    */
   where: Prisma.PayslipUploadWhereUniqueInput
@@ -1125,6 +1443,10 @@ export type PayslipUploadFindFirstArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the PayslipUpload
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
   /**
    * Filter, which PayslipUpload to fetch.
    */
@@ -1174,6 +1496,10 @@ export type PayslipUploadFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
+  /**
    * Filter, which PayslipUpload to fetch.
    */
   where?: Prisma.PayslipUploadWhereInput
@@ -1222,6 +1548,10 @@ export type PayslipUploadFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
+  /**
    * Filter, which PayslipUploads to fetch.
    */
   where?: Prisma.PayslipUploadWhereInput
@@ -1264,6 +1594,10 @@ export type PayslipUploadCreateArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the PayslipUpload
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
   /**
    * The data needed to create a PayslipUpload.
    */
@@ -1312,6 +1646,10 @@ export type PayslipUploadUpdateArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the PayslipUpload
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
   /**
    * The data needed to update a PayslipUpload.
    */
@@ -1379,6 +1717,10 @@ export type PayslipUploadUpsertArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
+  /**
    * The filter to search for the PayslipUpload to update in case it exists.
    */
   where: Prisma.PayslipUploadWhereUniqueInput
@@ -1405,6 +1747,10 @@ export type PayslipUploadDeleteArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
+  /**
    * Filter which PayslipUpload to delete.
    */
   where: Prisma.PayslipUploadWhereUniqueInput
@@ -1425,6 +1771,30 @@ export type PayslipUploadDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
 }
 
 /**
+ * PayslipUpload.payslips
+ */
+export type PayslipUpload$payslipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payslip
+   */
+  select?: Prisma.PayslipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payslip
+   */
+  omit?: Prisma.PayslipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipInclude<ExtArgs> | null
+  where?: Prisma.PayslipWhereInput
+  orderBy?: Prisma.PayslipOrderByWithRelationInput | Prisma.PayslipOrderByWithRelationInput[]
+  cursor?: Prisma.PayslipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayslipScalarFieldEnum | Prisma.PayslipScalarFieldEnum[]
+}
+
+/**
  * PayslipUpload without action
  */
 export type PayslipUploadDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1436,4 +1806,8 @@ export type PayslipUploadDefaultArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the PayslipUpload
    */
   omit?: Prisma.PayslipUploadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayslipUploadInclude<ExtArgs> | null
 }

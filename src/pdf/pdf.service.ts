@@ -44,7 +44,7 @@ export class PdfService {
         },
       ];
 
-      console.log('result',result)
+      // console.log('result',result[0].ippisNumber);
       return result;
       // return result.filter((r) => r.ippisNumber !== null);
     } catch (error) {
@@ -60,8 +60,9 @@ export class PdfService {
   async extractPdfsFromZip(
     zipBuffer: Buffer,
   ): Promise<{ fileName: string; pdfBuffer: Buffer }[]> {
+    let zip: JSZip | null = null;
     try {
-      const zip = await JSZip.loadAsync(zipBuffer);
+      zip = await JSZip.loadAsync(zipBuffer);
       const files: { fileName: string; pdfBuffer: Buffer }[] = [];
 
       const entries = Object.values(zip.files) as any[];
@@ -95,6 +96,9 @@ export class PdfService {
     } catch (error) {
       console.error('Error extracting zip:', error);
       throw new BadRequestException('Failed to extract ZIP archive');
+    } finally {
+      // Clear zip object to allow garbage collection
+      zip = null;
     }
   }
 

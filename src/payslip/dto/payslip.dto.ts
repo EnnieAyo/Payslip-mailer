@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, Matches } from 'class-validator';
 
 export class PayslipDto {
   @ApiProperty()
@@ -22,10 +23,19 @@ export class PayslipDto {
   employeeId!: number;
 
   @ApiProperty()
+  uploadId!: number;
+
+  @ApiProperty()
+  payMonth!: string;
+
+  @ApiProperty()
   emailSent!: boolean;
 
   @ApiProperty({ required: false })
   emailSentAt?: Date;
+
+  @ApiProperty({ required: false })
+  emailError?: string;
 
   @ApiProperty()
   createdAt!: Date;
@@ -48,7 +58,13 @@ export class PayslipUploadDto {
   filePath!: string;
 
   @ApiProperty()
+  payMonth!: string;
+
+  @ApiProperty()
   totalFiles!: number;
+
+  @ApiProperty()
+  processedFiles!: number;
 
   @ApiProperty()
   successCount!: number;
@@ -60,15 +76,63 @@ export class PayslipUploadDto {
   status!: string;
 
   @ApiProperty()
+  emailStatus!: string;
+
+  @ApiProperty({ required: false })
+  sentAt?: Date;
+
+  @ApiProperty({ required: false })
+  completedAt?: Date;
+
+  @ApiProperty()
   createdAt!: Date;
 
   @ApiProperty()
   updatedAt!: Date;
 }
 
+export class UploadPayslipDto {
+  @ApiProperty({
+    description: 'Pay month in YYYY-MM format (e.g., 2025-12)',
+    example: '2025-12',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\d{4}-(0[1-9]|1[0-2])$/, {
+    message: 'payMonth must be in YYYY-MM format (e.g., 2025-12)',
+  })
+  payMonth!: string;
+}
+
 export class UploadResultDto {
   @ApiProperty()
-  uploadId!: string;
+  uploadId!: number;
+
+  @ApiProperty()
+  batchId!: string;
+
+  @ApiProperty()
+  processedFiles!: number;
+
+  @ApiProperty()
+  failedFiles!: number;
+
+  @ApiProperty()
+  totalFiles!: number;
+
+  @ApiProperty()
+  payMonth!: string;
+}
+
+export class BatchSendResultDto {
+  @ApiProperty()
+  batchId!: string;
+
+  @ApiProperty()
+  payMonth!: string;
+
+  @ApiProperty()
+  totalPayslips!: number;
 
   @ApiProperty()
   successCount!: number;
@@ -76,6 +140,18 @@ export class UploadResultDto {
   @ApiProperty()
   failureCount!: number;
 
+  @ApiProperty({ required: false })
+  skippedCount?: number;
+
   @ApiProperty()
-  totalFiles!: number;
+  emailStatus!: string;
+
+  @ApiProperty({ required: false })
+  message?: string;
+
+  @ApiProperty()
+  sentAt!: Date;
+
+  @ApiProperty()
+  completedAt!: Date;
 }

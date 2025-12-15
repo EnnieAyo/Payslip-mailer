@@ -40,8 +40,12 @@ model Payslip {
   pdfContent Bytes
   employeeId Int
   employee  Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  uploadId  Int
+  upload    PayslipUpload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  payMonth  String  // Format: YYYY-MM (e.g., "2025-12" for December 2025)
   emailSent Boolean @default(false)
   emailSentAt DateTime?
+  emailError String? // Store error message if email fails
   createdAt DateTime @default(now())
   createdBy Int?
   updatedAt DateTime @updatedAt
@@ -50,6 +54,8 @@ model Payslip {
 
   @@index([ippisNumber])
   @@index([employeeId])
+  @@index([uploadId])
+  @@index([payMonth])
   @@index([uuid])
   @@map("payslips")
 }
@@ -59,17 +65,27 @@ model PayslipUpload {
   uuid      String  @unique @default(uuid())
   fileName  String
   filePath  String
+  payMonth  String  // Format: YYYY-MM (e.g., "2025-12" for December 2025)
   totalFiles Int
-  successCount Int @default(0)
-  failureCount Int @default(0)
-  status    String @default("pending") // pending, processing, completed
+  processedFiles Int @default(0) // Files successfully processed and saved
+  successCount Int @default(0) // Emails successfully sent
+  failureCount Int @default(0) // Emails failed to send
+  status    String @default("pending") // pending, processing, processed, sending, completed, failed
+  emailStatus String @default("pending") // pending, sending, completed, partial, failed
+  sentAt    DateTime? // When batch email sending was initiated
+  completedAt DateTime? // When batch email sending completed
   createdAt DateTime @default(now())
   createdBy Int?
   updatedAt DateTime @updatedAt
   updatedBy Int?
   deletedAt DateTime?
 
+  payslips  Payslip[]
+
   @@index([uuid])
+  @@index([payMonth])
+  @@index([status])
+  @@index([emailStatus])
   @@map("payslip_uploads")
 }
 
