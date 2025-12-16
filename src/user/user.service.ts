@@ -91,7 +91,7 @@ export class UserService {
     const [total, data] = await Promise.all([
       this.prisma.user.count({ where }),
       this.prisma.user.findMany({
-        where: {...where, deletedAt: null},
+        where: {...where, },
         take,
         skip,
         orderBy: { createdAt: 'desc' },
@@ -125,7 +125,7 @@ export class UserService {
 
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
-      where: { id , deletedAt: null },
+      where: { id ,  },
       select: {
         id: true,
         uuid: true,
@@ -217,8 +217,8 @@ export class UserService {
   }
 
   async delete(id: number, deleterId?: number) {
-    const user = await this.prisma.user.findFirst({ 
-      where: { id, deletedAt: null } 
+    const user = await this.prisma.user.findFirst({
+      where: { id, deletedAt: null }
     });
 
     if (!user) {
@@ -230,7 +230,7 @@ export class UserService {
       throw new BadRequestException('Cannot delete your own account');
     }
 
-    await this.prisma.user.update({ 
+    await this.prisma.user.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
@@ -253,8 +253,8 @@ export class UserService {
   }
 
   async updatePermissions(id: number, permissions: string[], updaterId?: number) {
-    const user = await this.prisma.user.findFirst({ 
-      where: { id, deletedAt: null } 
+    const user = await this.prisma.user.findFirst({
+      where: { id,  }
     });
 
     if (!user) {
@@ -303,8 +303,8 @@ export class UserService {
   }
 
   async toggleActivation(id: number, updaterId?: number) {
-    const user = await this.prisma.user.findFirst({ 
-      where: { id, deletedAt: null } 
+    const user = await this.prisma.user.findFirst({
+      where: { id,  }
     });
 
     if (!user) {
@@ -357,8 +357,8 @@ export class UserService {
   }
 
   async unlockUser(id: number, unlockerId?: number) {
-    const user = await this.prisma.user.findFirst({ 
-      where: { id, deletedAt: null } 
+    const user = await this.prisma.user.findFirst({
+      where: { id,  }
     });
 
     if (!user) {

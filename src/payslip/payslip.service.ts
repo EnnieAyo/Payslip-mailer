@@ -177,7 +177,17 @@ export class PayslipService {
       throw error;
     }
   }
-
+  
+  async getSummary(){
+    const totalPayslips = await this.prisma.payslip.count({});
+    const sentPayslips = await this.prisma.payslip.count({where:{emailSent:true}});
+    const pendingPayslips = await this.prisma.payslip.count({where:{emailSent:false}});
+    return {
+      totalPayslips,
+      sentPayslips,
+      pendingPayslips,
+    };
+  }
   async getUploadStatus(uploadId: string) {
     return this.prisma.payslipUpload.findUnique({
       where: { id: parseInt(uploadId) },

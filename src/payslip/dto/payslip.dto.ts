@@ -155,3 +155,13 @@ export class BatchSendResultDto {
   @ApiProperty()
   completedAt!: Date;
 }
+export class PayslipSummaryDto {
+  @ApiProperty()
+  totalPayslips!: number;
+
+  @ApiProperty()
+  sentPayslips!: number;
+
+  @ApiProperty()
+  pendingPayslips!: number;
+}

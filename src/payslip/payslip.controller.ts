@@ -15,7 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PayslipService } from './payslip.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { PayslipDto, PayslipUploadDto, UploadResultDto, UploadPayslipDto, BatchSendResultDto } from './dto/payslip.dto';
+import { PayslipDto, PayslipUploadDto, UploadResultDto, UploadPayslipDto, BatchSendResultDto, PayslipSummaryDto } from './dto/payslip.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RbacGuard } from '../auth/guards/rbac.guard';
@@ -73,6 +73,18 @@ export class PayslipController {
     );
   }
 
+    @Get('summary')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('payslips:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get summary of payslips by status' })
+  @ApiResponse({ status: 200, description: 'Payslip summary retrieved', type: PayslipSummaryDto })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async getSummary() {
+    return await this.payslipService.getSummary();
+  }
+
   @Get('upload/:uploadId')
   @UseGuards(JwtAuthGuard, RbacGuard)
   @Permissions('payslips:read')
@@ -85,7 +97,7 @@ export class PayslipController {
   async getUploadStatus(@Param('uploadId') uploadId: string) {
     return this.payslipService.getUploadStatus(uploadId);
   }
-
+  
   @Get('employee/:employeeId')
   @UseGuards(JwtAuthGuard, RbacGuard)
   @Permissions('payslips:read')
