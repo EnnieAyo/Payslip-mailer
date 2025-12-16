@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import { ApiKeyGuard } from './auth/guards/api-key-guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
       xPoweredBy: false,
     }),
   );
+
+  app.useGlobalGuards(new ApiKeyGuard());
 
   // Swagger setup
   const config = new DocumentBuilder()
