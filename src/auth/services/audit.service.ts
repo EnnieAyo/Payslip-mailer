@@ -115,4 +115,38 @@ export class AuditService {
       },
     });
   }
+
+  async getUserAuditTrail(userId: number,page= 0, limit = 50) {
+    const take = limit;
+    const skip = (page-1>0)? (page-1) * limit : 0;
+const [total, data] = await Promise.all([
+      this.prisma.auditLog.count({ where: { userId } }),
+      this.prisma.auditLog.findMany({
+        where: {
+          userId
+        },
+        take,
+        skip,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 0,
+    };
+  }
 }

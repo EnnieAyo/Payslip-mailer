@@ -33,6 +33,7 @@ async function main() {
           'audit:read',
           'roles:read',
           'roles:write',
+          'reports:read'
         ],
         isSystem: true,
       },
@@ -45,8 +46,7 @@ async function main() {
           'payslips:read',
           'payslips:write',
           'employees:read',
-          'employees:write',
-          'audit:read',
+          'employees:write'
         ],
         isSystem: true,
       },
@@ -85,6 +85,7 @@ async function main() {
           'audit:read',
           'roles:read',
           'roles:write',
+          'reports:read'
         ],
         isActive: true,
         isLocked: false,
@@ -104,6 +105,7 @@ async function main() {
           'payslips:read',
           'payslips:write',
           'employees:read',
+          'employees:write'
         ],
         isActive: true,
         isLocked: false,

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuditService } from '../auth/services/audit.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RbacGuard } from '../auth/guards/rbac.guard';
@@ -14,7 +14,7 @@ export class AuditController {
 
   @Get('logs')
   @UseGuards(JwtAuthGuard, RbacGuard)
-  @Permissions('users:read')
+  @Permissions('audit:read')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get audit logs (Admin only)' })
   @ApiQuery({ name: 'userId', required: false, type: Number })
@@ -58,5 +58,21 @@ export class AuditController {
     @Query('resource') resource: string,
   ) {
     return this.auditService.getAuditTrail(parseInt(resourceId), resource);
+  }
+
+  @Get('trail/:userId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get audit trail for a user' })
+  @ApiResponse({ status: 200, description: 'Audit trail retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async getUserAuditTrail(
+    @Param('userId') userId: string,
+    @Query() pagination?: PaginationDto,
+  ) {
+    const page = pagination?.page ?? 0;
+    const limit = pagination?.limit ?? 50;
+    return await this.auditService.getUserAuditTrail(+userId, +page, +limit  );
   }
 }
