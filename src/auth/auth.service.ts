@@ -228,11 +228,21 @@ export class AuthService {
     const token = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
 
+    //hash the token before saving
+    const hashedToken = await bcrypt.hash(token+email, 10);
+
+    // Delete any existing password reset tokens for this user
+    await this.prisma.passwordReset.deleteMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
     // Create password reset record
     const resetRecord = await this.prisma.passwordReset.create({
       data: {
         userId: user.id,
-        token,
+        token: hashedToken,
         expiresAt,
       },
     });
@@ -241,7 +251,7 @@ export class AuthService {
     try {
       await this.emailService.sendPasswordResetToken(
         user.email,
-        token,
+        hashedToken,
         `${user.firstName} ${user.lastName}`,
       );
     } catch (error) {

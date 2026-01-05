@@ -54,15 +54,18 @@ export class EmailService {
     userName: string,
   ): Promise<boolean> {
     try {
+      const resetUrl = `${process.env.APP_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
       await this.transporter.sendMail({
         from: process.env.SMTP_FROM,
         to,
         subject: 'Password Reset Request - 6-Digit Code',
         html: `
           <p>Dear ${userName},</p>
-          <p>You have requested to reset your password. Your password reset code is:</p>
-          <h2 style="font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #007bff;">${token}</h2>
-          <p>This code will expire in 15 minutes.</p>
+          <p>You have requested to reset your password. Please click the button below to reset it:</p>
+          <p><a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
+          <p>Or copy and paste this link into your browser:</p>
+          <p style="word-break: break-all;">${resetUrl}</p>
+          <p>This link will expire in 15 minutes.</p>
           <p>If you did not request this password reset, please ignore this email.</p>
           <p>Best regards,<br>Payslip Mailer Team</p>
         `,
