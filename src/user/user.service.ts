@@ -4,12 +4,14 @@ import { AuditService } from '../auth/services/audit.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcryptjs';
+import { AuthService } from '@/auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private readonly authService: AuthService,
   ) {}
 
   async create(createUserDto: CreateUserDto, creatorId?: number) {
@@ -69,6 +71,12 @@ export class UserService {
         },
         status: 'success',
       });
+    }
+
+    try {
+      await this.authService.sendEmailVerification(user.id, user.email, user.firstName + ' ' + user.lastName);
+    } catch (error) {
+      console.error(`Error sending verification email to ${user.email}:`, error);
     }
 
     return user;
