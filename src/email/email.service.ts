@@ -58,7 +58,7 @@ export class EmailService {
       await this.transporter.sendMail({
         from: process.env.SMTP_FROM,
         to,
-        subject: 'Password Reset Request - 6-Digit Code',
+        subject: 'Password Reset Request',
         html: `
           <p>Dear ${userName},</p>
           <p>You have requested to reset your password. Please click the button below to reset it:</p>
@@ -101,7 +101,7 @@ export class EmailService {
         subject: 'Verify Your Email Address',
         html: `
           <p>Dear ${userName},</p>
-          <p>Thank you for registering. Please verify your email address by clicking the link below:</p>
+          <p>Account created. Please verify your email address by clicking the link below:</p>
           <p><a href="${verificationUrl}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Verify Email</a></p>
           <p>Or copy and paste this link into your browser:</p>
           <p style="word-break: break-all;">${verificationUrl}</p>

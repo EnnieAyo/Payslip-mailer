@@ -39,7 +39,7 @@ export class UserService {
           'employees:write',
           'audit:read',
         ],
-        role: 'user',
+        // role: 'user',
       },
       select: {
         id: true,
