@@ -1,16 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../auth/services/audit.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { BulkEmployeeDto, BulkUploadResultDto } from './dto/bulk-upload.dto';
 import * as xlsx from 'xlsx';
-import { validate } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { InjectQueue } from '@nestjs/bullmq';
+import { REDIS_EMPLOYEE_QUEUE } from '@/constant';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class EmployeeService {
   constructor(
+    @InjectQueue(REDIS_EMPLOYEE_QUEUE) private employeeQueue: Queue,
     private prisma: PrismaService,
     private auditService: AuditService,
   ) {}
@@ -39,13 +40,23 @@ export class EmployeeService {
     return employee;
   }
 
-  async findAll(page = 0, limit = 10) {
+  async findAll(page = 0, limit = 10, search?: string) {
     const take = limit;
     const skip = (page-1>0)? (page-1) * limit : 0;
+    const where: any ={
+      ...(search && {
+        OR: [
+          { firstName: { contains: search, mode: 'insensitive' } },
+          { lastName: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { ippisNumber: { contains: search, mode: 'insensitive' } },
+        ],
+      })
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.employee.findMany({
-        where: { deletedAt: null },
+        where: { ...where, deletedAt: null },
         take,
         skip,
         orderBy: { id: 'asc' },
@@ -215,7 +226,7 @@ export class EmployeeService {
    */
   generateTemplate(): Buffer {
     const workbook = xlsx.utils.book_new();
-    
+
     // Create sample data with headers
     const sampleData = [
       {
@@ -253,157 +264,46 @@ export class EmployeeService {
 
   /**
    * Bulk upload employees from Excel file
+   * Adds the job to the queue for asynchronous processing
    */
   async bulkUpload(
     fileBuffer: Buffer,
     userId?: number,
-  ): Promise<BulkUploadResultDto> {
-    const startTime = Date.now();
-    const errors: Array<{ row: number; ippisNumber?: string; errors: string[] }> = [];
-    let successCount = 0;
-    let failureCount = 0;
-
+  ): Promise<{ message: string; jobId: string }> {
     try {
-      // Parse Excel file
-      const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
-      const sheetName = workbook.SheetNames[0];
-      
-      if (!sheetName) {
-        throw new BadRequestException('Excel file has no sheets');
-      }
+      // Add job to queue
+      const job = await this.employeeQueue.add('bulk-upload', {
+        fileBuffer,
+        userId,
+      },
+    {
+      removeOnComplete: 5,
+      removeOnFail: 5,
+    });
 
-      const worksheet = workbook.Sheets[sheetName];
-      const rawData: any[] = xlsx.utils.sheet_to_json(worksheet);
-
-      if (!rawData || rawData.length === 0) {
-        throw new BadRequestException('Excel file is empty');
-      }
-
-      const totalRecords = rawData.length;
-
-      // Process each row
-      for (let i = 0; i < rawData.length; i++) {
-        const rowNumber = i + 2; // Excel row number (header is row 1)
-        const row = rawData[i];
-
-        try {
-          // Map Excel columns to DTO
-          const employeeDto = plainToClass(BulkEmployeeDto, {
-            ippisNumber: row['IPPIS Number']?.toString().trim(),
-            firstName: row['First Name']?.toString().trim(),
-            lastName: row['Last Name']?.toString().trim(),
-            email: row['Email']?.toString().trim(),
-            department: row['Department']?.toString().trim(),
-          });
-
-          // Validate DTO
-          const validationErrors = await validate(employeeDto);
-          
-          if (validationErrors.length > 0) {
-            const errorMessages = validationErrors.map(
-              (error) => Object.values(error.constraints || {}).join(', '),
-            );
-            
-            errors.push({
-              row: rowNumber,
-              ippisNumber: row['IPPIS Number'],
-              errors: errorMessages,
-            });
-            failureCount++;
-            continue;
-          }
-
-          // Check for duplicate IPPIS number in database
-          const existingEmployee = await this.prisma.employee.findFirst({
-            where: { 
-              ippisNumber: employeeDto.ippisNumber,
-              deletedAt: null,
-            },
-          });
-
-          if (existingEmployee) {
-            errors.push({
-              row: rowNumber,
-              ippisNumber: employeeDto.ippisNumber,
-              errors: [`Employee with IPPIS ${employeeDto.ippisNumber} already exists`],
-            });
-            failureCount++;
-            continue;
-          }
-
-          // Check for duplicate email in database
-          const existingEmail = await this.prisma.employee.findFirst({
-            where: { 
-              email: employeeDto.email,
-              deletedAt: null,
-            },
-          });
-
-          if (existingEmail) {
-            errors.push({
-              row: rowNumber,
-              ippisNumber: employeeDto.ippisNumber,
-              errors: [`Email ${employeeDto.email} is already registered`],
-            });
-            failureCount++;
-            continue;
-          }
-
-          // Create employee
-          await this.prisma.employee.create({
-            data: {
-              ippisNumber: employeeDto.ippisNumber,
-              firstName: employeeDto.firstName,
-              lastName: employeeDto.lastName,
-              email: employeeDto.email,
-              department: employeeDto.department,
-              createdBy: userId,
-            },
-          });
-
-          successCount++;
-        } catch (error: any) {
-          errors.push({
-            row: rowNumber,
-            ippisNumber: row['IPPIS Number'],
-            errors: [error.message || 'Unknown error occurred'],
-          });
-          failureCount++;
-        }
-      }
-
-      const processingTime = (Date.now() - startTime)/1000; // in seconds
-
-      // Log audit trail
+      // Log initial audit entry
       if (userId) {
         await this.auditService.log({
           userId,
-          action: 'EMPLOYEES_BULK_UPLOAD',
+          action: 'EMPLOYEES_BULK_UPLOAD_STARTED',
           resource: 'employee',
           details: {
-            totalRecords,
-            successCount,
-            failureCount,
-            processingTime: processingTime + 's',
-            hasErrors: failureCount > 0,
+            jobId: job.id,
+            status: 'queued',
           },
-          status: failureCount === totalRecords ? 'failure' : 'success',
+          status: 'success',
         });
       }
 
       return {
-        totalRecords,
-        successCount,
-        failureCount,
-        errors,
-        processingTime,
+        message: 'Bulk upload job has been queued for processing',
+        jobId: job.id as string,
       };
     } catch (error: any) {
-      // Log error
       if (userId) {
         await this.auditService.log({
           userId,
-          action: 'EMPLOYEES_BULK_UPLOAD',
+          action: 'EMPLOYEES_BULK_UPLOAD_FAILED',
           resource: 'employee',
           details: { error: error.message },
           status: 'failure',
@@ -412,8 +312,34 @@ export class EmployeeService {
       }
 
       throw new BadRequestException(
-        `Failed to process Excel file: ${error.message}`,
+        `Failed to queue bulk upload: ${error.message}`,
       );
+    }
+  }
+
+  /**
+   * Get the status of a bulk upload job
+   */
+  async getBulkUploadStatus(jobId: string) {
+    const job = await this.employeeQueue.getJob(jobId);
+
+    if (!job) {
+      throw new NotFoundException(`Job with ID ${jobId} not found`);
+    }
+
+    const state = await job.getState();
+    const progress = job.progress;
+    const returnValue = job.returnvalue;
+
+    return {
+      jobId: job.id,
+      state,
+      progress,
+      result: returnValue,
+      createdAt: job.timestamp,
+      processedAt: job.processedOn,
+      finishedAt: job.finishedOn,
+      failedReason: job.failedReason,
     };
   }
 }

@@ -16,12 +16,36 @@ import { AuditLoggingInterceptor } from './common/interceptors/audit-logging.int
 import { ResponseWrapperInterceptor } from './common/interceptors/response-wrapper.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { BullModule } from '@nestjs/bullmq';
+import { REDIS_APP_PREFIX, REDIS_EMPLOYEE_QUEUE, REDIS_PAYSILP_QUEUE } from './constant';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST || 'localhost',
+        port: parseInt(process.env.REDIS_PORT|| '6379') ,
+        username: process.env.REDIS_USERNAME || undefined,
+        password: process.env.REDIS_PASSWORD || undefined,
+        maxRetriesPerRequest: null,
+        enableReadyCheck: false,
+      },
+      prefix: REDIS_APP_PREFIX,
+      // extraOptions: {
+      //   manualRegistration: true,
+      // },
+    }),
+    // BullModule.registerQueue(
+    //   {
+    //   name: REDIS_PAYSILP_QUEUE
+    // },
+    //   {
+    //   name: REDIS_EMPLOYEE_QUEUE,
+    // }
+    // ),
     PrismaModule,
     AuthModule,
     PayslipModule,

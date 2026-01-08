@@ -6,10 +6,22 @@ import { EmailModule } from '../email/email.module';
 import { PdfModule } from '../pdf/pdf.module';
 import { EmployeeModule } from '../employee/employee.module';
 import { AuthModule } from '../auth/auth.module';
+import { REDIS_PAYSILP_QUEUE } from '@/constant';
+import { BullModule } from '@nestjs/bullmq';
+import { PayslipQueueConsumer } from './payslipQueue.consumer';
 
 @Module({
-  imports: [PrismaModule, EmailModule, PdfModule, EmployeeModule, AuthModule],
+  imports: [
+    BullModule.registerQueue(
+      {
+      name: REDIS_PAYSILP_QUEUE
+    }),
+    PrismaModule,
+    EmailModule,
+    PdfModule,
+    EmployeeModule,
+    AuthModule],
   controllers: [PayslipController],
-  providers: [PayslipService],
+  providers: [PayslipService, PayslipQueueConsumer],
 })
 export class PayslipModule {}

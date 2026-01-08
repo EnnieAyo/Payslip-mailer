@@ -31,7 +31,7 @@ export class PayslipController {
   @UseGuards(JwtAuthGuard, RbacGuard)
   @Permissions('payslips:write')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Upload bulk payslips (PDF or ZIP) - processes but does not send emails' })
+  @ApiOperation({ summary: 'Upload bulk payslips (PDF or ZIP) - Queued processing' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -44,7 +44,20 @@ export class PayslipController {
     },
   })
   @UseInterceptors(FileInterceptor('file'))
-  @ApiResponse({ status: 201, description: 'Upload processed (emails not sent yet)', type: UploadResultDto })
+  @ApiResponse({
+    status: 202,
+    description: 'Upload job queued successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        uploadId: { type: 'number' },
+        batchId: { type: 'string' },
+        jobId: { type: 'string' },
+        payMonth: { type: 'string' },
+      },
+    },
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
   async uploadPayslips(
@@ -71,6 +84,36 @@ export class PayslipController {
       body.payMonth,
       user?.id,
     );
+  }
+
+  @Get('upload/job/:jobId')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('payslips:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get status of an upload job' })
+  @ApiParam({ name: 'jobId', description: 'Job ID returned from upload' })
+  @ApiResponse({
+    status: 200,
+    description: 'Job status retrieved',
+    schema: {
+      type: 'object',
+      properties: {
+        jobId: { type: 'string' },
+        state: { type: 'string', enum: ['waiting', 'active', 'completed', 'failed', 'delayed'] },
+        progress: { type: 'object' },
+        result: { type: 'object' },
+        createdAt: { type: 'number' },
+        processedAt: { type: 'number' },
+        finishedAt: { type: 'number' },
+        failedReason: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Job not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async getUploadJobStatus(@Param('jobId') jobId: string) {
+    return await this.payslipService.getUploadJobStatus(jobId);
   }
 
     @Get('summary')
@@ -205,9 +248,22 @@ export class PayslipController {
   @UseGuards(JwtAuthGuard, RbacGuard)
   @Permissions('payslips:write')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Send all payslips in a batch via email' })
+  @ApiOperation({ summary: 'Queue batch sending (Queued processing)' })
   @ApiParam({ name: 'batchId', description: 'Batch UUID or numeric ID' })
-  @ApiResponse({ status: 200, description: 'Batch sending initiated/completed', type: BatchSendResultDto })
+  @ApiResponse({
+    status: 202,
+    description: 'Batch send job queued successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        batchId: { type: 'string' },
+        jobId: { type: 'string' },
+        payMonth: { type: 'string' },
+        totalPayslips: { type: 'number' },
+      },
+    },
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
   @ApiResponse({ status: 404, description: 'Batch not found' })
@@ -217,5 +273,35 @@ export class PayslipController {
     @CurrentUser() user: any,
   ) {
     return this.payslipService.sendBatch(batchId, user?.id);
+  }
+
+  @Get('batches/send/job/:jobId')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('payslips:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get status of a batch send job' })
+  @ApiParam({ name: 'jobId', description: 'Job ID returned from send batch' })
+  @ApiResponse({
+    status: 200,
+    description: 'Job status retrieved',
+    schema: {
+      type: 'object',
+      properties: {
+        jobId: { type: 'string' },
+        state: { type: 'string', enum: ['waiting', 'active', 'completed', 'failed', 'delayed'] },
+        progress: { type: 'object' },
+        result: { type: 'object' },
+        createdAt: { type: 'number' },
+        processedAt: { type: 'number' },
+        finishedAt: { type: 'number' },
+        failedReason: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Job not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async getBatchSendJobStatus(@Param('jobId') jobId: string) {
+    return await this.payslipService.getBatchSendJobStatus(jobId);
   }
 }

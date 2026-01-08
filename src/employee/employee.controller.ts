@@ -11,7 +11,6 @@ import { Permissions } from '../auth/decorators/permissions.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { BulkUploadResultDto } from './dto/bulk-upload.dto';
 
 @ApiTags('Employees')
 @Controller('employees')
@@ -40,13 +39,14 @@ export class EmployeeController {
   @ApiOperation({ summary: 'Get all employees' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'search', required: false, type: String })
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({ status: 200, description: 'Employees retrieved' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
-  async findAll(@Query() pagination: PaginationDto) {
+  async findAll(@Query() pagination: PaginationDto, @Query('search') search?: string) {
     const { page = 0, limit = 10 } = pagination || {};
-    return   await this.employeeService.findAll(page, limit);
+    return   await this.employeeService.findAll(page, limit, search);
   }
 
   @Get(':id')
@@ -145,7 +145,7 @@ export class EmployeeController {
   @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Bulk upload employees from Excel file' })
+  @ApiOperation({ summary: 'Bulk upload employees from Excel file (Queued processing)' })
   @ApiBody({
     description: 'Excel file containing employee data',
     schema: {
@@ -158,10 +158,16 @@ export class EmployeeController {
       },
     },
   })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Bulk upload completed',
-    type: BulkUploadResultDto,
+  @ApiResponse({
+    status: 202,
+    description: 'Bulk upload job queued successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        jobId: { type: 'string' },
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Invalid file format or data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -169,7 +175,7 @@ export class EmployeeController {
   async bulkUpload(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: any,
-  ): Promise<BulkUploadResultDto> {
+  ) {
     if (!file) {
       throw new Error('No file uploaded');
     }
@@ -179,5 +185,35 @@ export class EmployeeController {
     }
 
     return await this.employeeService.bulkUpload(file.buffer, user?.id);
+  }
+
+  @Get('bulk-upload/status/:jobId')
+  @UseGuards(JwtAuthGuard, RbacGuard)
+  @Permissions('employees:read')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get status of a bulk upload job' })
+  @ApiParam({ name: 'jobId', description: 'Job ID returned from bulk upload' })
+  @ApiResponse({
+    status: 200,
+    description: 'Job status retrieved',
+    schema: {
+      type: 'object',
+      properties: {
+        jobId: { type: 'string' },
+        state: { type: 'string', enum: ['waiting', 'active', 'completed', 'failed', 'delayed'] },
+        progress: { type: 'object' },
+        result: { type: 'object' },
+        createdAt: { type: 'number' },
+        processedAt: { type: 'number' },
+        finishedAt: { type: 'number' },
+        failedReason: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Job not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden - insufficient permissions' })
+  async getBulkUploadStatus(@Param('jobId') jobId: string) {
+    return await this.employeeService.getBulkUploadStatus(jobId);
   }
 }
