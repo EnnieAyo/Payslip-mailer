@@ -7,15 +7,15 @@ import { ApiKeyGuard } from './auth/guards/api-key-guard';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Disable x-powered-by header
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.disable('x-powered-by');
+
   app.enableCors({
     origin: true,
     credentials: true,
   });
-  app.use(
-    helmet({
-      xPoweredBy: false,
-    }),
-  );
+  app.use(helmet());
 
   app.useGlobalGuards(new ApiKeyGuard());
 
