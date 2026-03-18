@@ -108,13 +108,13 @@ export class PdfService {
     uploadId: string,
   ): Promise<string> {
     const uploadsDir = path.join(process.cwd(), 'uploads', uploadId);
-
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
+    //todo save to s3 bucket and not file system
+    // if (!fs.existsSync(uploadsDir)) {
+    //   fs.mkdirSync(uploadsDir, { recursive: true });
+    // }
 
     const filePath = path.join(uploadsDir, fileName);
-    fs.writeFileSync(filePath, pdfBuffer);
+    // fs.writeFileSync(filePath, pdfBuffer);
 
     return filePath;
   }
