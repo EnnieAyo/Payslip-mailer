@@ -431,6 +431,7 @@ export class AuthService {
     // Generate 6-digit random token
     const token = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const enc_token = await bcrypt.hash(token+userId.toString(), 10);
 
     // Delete any existing unused 2FA tokens for this user
     await this.prisma.twoFactorToken.deleteMany({
@@ -444,7 +445,7 @@ export class AuthService {
     await this.prisma.twoFactorToken.create({
       data: {
         userId,
-        token,
+        token: enc_token,
         expiresAt,
       },
     });
@@ -467,12 +468,14 @@ export class AuthService {
     const tokenRecord = await this.prisma.twoFactorToken.findFirst({
       where: {
         userId,
-        token,
+        // token: enc_token,
         usedAt: null,
       },
     });
 
-    if (!tokenRecord) {
+    const isTokenValid = tokenRecord ? await bcrypt.compare(token+userId.toString(), tokenRecord.token) : false;
+
+    if (!tokenRecord || !isTokenValid) {
       throw new UnauthorizedException('Invalid 2FA token');
     }
 
