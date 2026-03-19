@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 export interface AuditLogInput {
@@ -16,6 +16,8 @@ export interface AuditLogInput {
 @Injectable()
 export class AuditService {
   constructor(private prisma: PrismaService) {}
+
+  private logger = new Logger(AuditService.name);
 
   async findUserIdWhenUnknown(
     details: Record<string, any>,
@@ -35,19 +37,25 @@ export class AuditService {
   }
 
   async log(input: AuditLogInput) {
-    return this.prisma.auditLog.create({
-      data: {
-        userId: input.userId|| await this.findUserIdWhenUnknown(input.details || {}),
-        action: input.action,
-        resource: input.resource,
-        resourceId: input.resourceId,
-        details: input.details ? JSON.stringify(input.details) : undefined,
-        ipAddress: input.ipAddress,
-        userAgent: input.userAgent,
-        status: input.status || 'success',
-        errorMessage: input.errorMessage,
-      },
-    });
+    try{
+      return this.prisma.auditLog.create({
+        data: {
+          userId: input.userId|| await this.findUserIdWhenUnknown(input.details || {}),
+          action: input.action,
+          resource: input.resource,
+          resourceId: input.resourceId,
+          details: input.details ? JSON.stringify(input.details) : undefined,
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
+          status: input.status || 'success',
+          errorMessage: input.errorMessage,
+        },
+      });
+    } catch (error) {
+      this.logger.error('Failed to log audit event:', error, { ...input, userId: input.userId || null });
+      // Don't throw error to avoid affecting main flow
+      return null;
+    }
   }
 
   async getLogs(filters?: {
