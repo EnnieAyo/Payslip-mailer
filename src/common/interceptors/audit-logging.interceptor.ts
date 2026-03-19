@@ -306,6 +306,10 @@ export class AuditLoggingInterceptor implements NestInterceptor {
       const details = auditConfig.extractDetails
         ? auditConfig.extractDetails(body, params, responseData)
         : {};
+      if (!details || typeof details !== 'object') {
+        console.error('Invalid audit details format', details);
+        return;
+      }
 
       // Only log if user is authenticated OR it's a public endpoint (auth)
       const userId = user?.id;
