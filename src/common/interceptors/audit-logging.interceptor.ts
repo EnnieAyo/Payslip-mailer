@@ -297,6 +297,12 @@ export class AuditLoggingInterceptor implements NestInterceptor {
     } = options;
 
     try {
+      if (!body || !params) {
+        // If body or params are missing, we can't extract details properly
+        console.warn('Audit log skipped due to missing body or params', {}
+        );
+        return;
+      }
       // Extract resource ID if custom extractor provided
       const resourceId = auditConfig.extractResourceId
         ? auditConfig.extractResourceId(body, params)
